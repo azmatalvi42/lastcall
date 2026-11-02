@@ -1,0 +1,69 @@
+@import "tailwindcss";
+@import "@fontsource-variable/fraunces/opsz.css";
+@import "@fontsource/atkinson-hyperlegible/latin-400.css";
+@import "@fontsource/atkinson-hyperlegible/latin-700.css";
+
+@theme {
+  --font-serif: "Fraunces Variable", Georgia, "Times New Roman", serif;
+  --font-sans: "Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
+  --color-cream: #f6f0e4;
+  --color-paper: #fbf8f1;
+  --color-sand: #ebe1cf;
+  --color-line: #d9ccb4;
+  --color-ink: #1f2a25;
+  --color-muted: #47524c;
+  --color-pine: #1f4034;
+  --color-pine-dark: #163026;
+  --color-clay: #8f4522;
+  --color-clay-soft: #e9c9a8;
+}
+
+html { font-size: 112.5%; scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+body { font-family: var(--font-sans); color: var(--color-ink); background: var(--color-cream); line-height: 1.6; }
+h1, h2, h3 { font-family: var(--font-serif); font-optical-sizing: auto; color: var(--color-pine-dark); line-height: 1.15; letter-spacing: -0.01em; text-wrap: balance; }
+p { text-wrap: pretty; }
+:focus-visible { outline: 3px solid var(--color-clay); outline-offset: 3px; border-radius: 4px; }
+[id] { scroll-margin-top: 6rem; }
+
+@layer components {
+.btn { display: inline-flex; white-space: nowrap; align-items: center; justify-content: center; gap: .5rem; min-height: 3.25rem; padding: .75rem 1.4rem; border-radius: .6rem; font-weight: 700; text-decoration: none; transition: background-color .15s ease, transform .15s ease; }
+.btn-primary { background: var(--color-pine); color: #fff; }
+.btn-primary:hover { background: var(--color-pine-dark); }
+.btn-secondary { background: var(--color-paper); color: var(--color-pine-dark); box-shadow: inset 0 0 0 2px var(--color-pine); }
+.btn-secondary:hover { background: #fff; }
+
+.eyebrow { font-family: var(--font-sans); font-weight: 700; text-transform: uppercase; letter-spacing: .08em; font-size: .9rem; color: var(--color-clay); }
+
+/* FAQ */
+details.faq { border-top: 1px solid var(--color-line); }
+details.faq:last-of-type { border-bottom: 1px solid var(--color-line); }
+details.faq summary { list-style: none; cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 1rem; min-height: 3.5rem; padding: 1rem 0; font-weight: 700; font-size: 1.05rem; color: var(--color-pine-dark); }
+details.faq summary::-webkit-details-marker { display: none; }
+details.faq summary::after { content: "+"; font-family: var(--font-serif); font-size: 1.6rem; line-height: 1; color: var(--color-clay); flex: none; }
+details.faq[open] summary::after { content: "\2212"; }
+details.faq .answer { padding: 0 0 1.25rem; color: var(--color-muted); max-width: 44rem; }
+
+/* Form */
+.field label { display: block; font-weight: 700; margin-bottom: .35rem; }
+.field .hint { display: block; font-weight: 400; color: var(--color-muted); font-size: .9rem; }
+.field input[type="text"], .field input[type="tel"], .field select { width: 100%; min-height: 3.25rem; padding: .7rem .9rem; border: 2px solid #8b8170; border-radius: .5rem; background: #fff; color: var(--color-ink); font: inherit; }
+.field select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9' viewBox='0 0 14 9'%3E%3Cpath d='M1 1l6 6 6-6' stroke='%231f4034' stroke-width='2' fill='none'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 1rem center; padding-right: 2.5rem; }
+.field input[type="file"] { width: 100%; min-width: 0; max-width: 100%; font: inherit; padding: .6rem; border: 2px dashed #8b8170; border-radius: .5rem; background: #fff; min-height: 3.25rem; }
+.field input[type="file"]::file-selector-button { font: inherit; font-weight: 700; min-height: 2.75rem; padding: .4rem 1rem; margin-right: .8rem; border: 0; border-radius: .4rem; background: var(--color-sand); color: var(--color-pine-dark); cursor: pointer; }
+.field input:focus-visible, .field select:focus-visible { border-color: var(--color-pine); }
+.field .error { color: #8a1f11; font-weight: 700; margin-top: .35rem; }
+.field[data-invalid] input, .field[data-invalid] select { border-color: #8a1f11; }
+.hp { position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden; }
+
+}
+
+/* Thank-you and error states work without JavaScript via :target */
+.state { display: none; scroll-margin-top: 7rem; }
+.state:target, .state[data-show] { display: block; }
+#walkthrough:has(#thanks:target) .form-card, #walkthrough:has(#thanks[data-show]) .form-card { display: none; }
+
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { transition: none !important; animation: none !important; }
+}

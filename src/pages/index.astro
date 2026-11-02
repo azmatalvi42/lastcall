@@ -1,0 +1,420 @@
+---
+import { Picture } from 'astro:assets';
+import '../styles/global.css';
+import { site, telHref, timelines, regionOptions, uploadLimits, tooLargeMessage, servicePromises, commissionSentence } from '../config/site';
+import livingRoom from '../assets/img/living-room.jpg';
+import chinaCabinet from '../assets/img/china-cabinet.jpg';
+import hallwayBoxes from '../assets/img/hallway-boxes.jpg';
+import saleTable from '../assets/img/sale-table.jpg';
+import bungalow from '../assets/img/brick-bungalow.jpg';
+
+const P = servicePromises;
+const anyPlaceholder =
+  site.businessNameIsPlaceholder || site.phoneIsPlaceholder || site.emailIsPlaceholder || site.hoursIsPlaceholder || site.urlIsPlaceholder;
+const regionList = site.regions.join(', ').replace(/, ([^,]*)$/, ' and $1');
+const title = `${site.businessName} | Full house buyouts and estate sales across the GTA`;
+const description = `Clearing out a home in ${regionList}? Get one written offer for the whole house, and we empty it quickly. We also run full estate sales. Free, no-obligation walkthrough.`;
+const year = new Date().getFullYear();
+const cta = 'Get my free offer';
+
+/** Leftover promises shown in the dark band, in order. Missing promises are skipped. */
+const leftovers = [
+  P.keepsakesFirst,
+  P.donateUsable,
+  { title: 'The rest is cleared properly.', text: 'We recycle what we can and dispose of the rest the right way.' },
+  P.broomClean,
+].filter((x): x is { title: string; text: string } => Boolean(x));
+
+const faqs = [
+  {
+    q: 'How does the buyout offer work?',
+    a: `After a free walkthrough, we give you one written offer for the contents of the home. There is no obligation. If you accept, we agree a date, pack everything up and empty the house quickly${P.broomClean ? ', leaving it broom-clean' : ''}.`,
+  },
+  {
+    q: 'How quickly can you empty the house?',
+    a: 'It depends on the size of the home and how full it is. A buyout is usually the quickest option. An estate sale runs for 2 to 3 days, with setup beforehand and clean-out after. We will give you dates at the walkthrough.',
+  },
+  {
+    q: 'How much does it cost?',
+    a: `The walkthrough and the offer are free. With a buyout, we pay you one agreed amount for the contents, set out in writing. With an estate sale, you keep the proceeds, less our commission. ${commissionSentence}`,
+  },
+  {
+    q: 'How do I know whether a buyout or a sale is right?',
+    a: 'A buyout is simpler and quicker, which helps when the house is sold or listed, or when you would rather not host a sale. A sale can make sense when there is time and the home has plenty of furniture, collectibles or household goods. We will tell you honestly which one we think fits, and why.',
+  },
+  {
+    q: 'Can family keep some things first?',
+    a: `Yes. Take whatever you want before we start.${P.keepsakesFirst ? ' If we come across photos, letters or personal papers while sorting, we set them aside for you instead of selling them.' : ''}`,
+  },
+  {
+    q: 'Do I need to be there?',
+    a: 'Only for the walkthrough, and even that can be done with a family member or your realtor if you live out of town. After that, we keep you updated by phone or email.',
+  },
+  {
+    q: 'What happens to things nobody keeps?',
+    a: `${P.donateUsable ? 'We donate usable items to local charities, recycle what we can' : 'We recycle what we can'} and dispose of the rest properly. The plan for leftovers is written into your agreement.`,
+  },
+  {
+    q: 'Do you work with executors and realtors?',
+    a: `Yes. We can work to a listing or closing date and coordinate access with you.${P.executorSummary ? ' At the end, we send a written summary for the estate file.' : ''}`,
+  },
+  {
+    q: 'Is the walkthrough really free?',
+    a: 'Yes. The walkthrough and the written offer cost nothing, and there is no obligation. If you decide not to go ahead, that is completely fine.',
+  },
+];
+---
+<!doctype html>
+<html lang="en-CA">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#1f4034" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+  </head>
+  <body class="pb-24 md:pb-0">
+    <a href="#main" class="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 btn btn-primary">Skip to main content</a>
+
+    {anyPlaceholder && (
+      <div class="bg-sand text-ink text-center text-[0.85rem] py-2 px-4 border-b border-line">
+        Preview: the phone number, email, hours and web address are placeholders.
+      </div>
+    )}
+
+    <header class="sticky top-0 z-40 bg-cream/95 backdrop-blur border-b border-line">
+      <div class="mx-auto max-w-6xl px-5 flex items-center justify-between gap-4 min-h-[4.5rem]">
+        <a href="/" class="flex items-center gap-3 no-underline text-pine-dark min-h-12">
+          <svg aria-hidden="true" width="34" height="34" viewBox="0 0 34 34"><rect width="34" height="34" rx="8" fill="#1f4034"/><path d="M8 17.5 17 10l9 7.5V25a1 1 0 0 1-1 1h-5v-5h-6v5H9a1 1 0 0 1-1-1z" fill="#f6f0e4"/><circle cx="24.5" cy="11" r="2.2" fill="#e9c9a8"/></svg>
+          <span class="font-serif text-[1.3rem] font-semibold leading-none">{site.businessName}</span>
+        </a>
+        <nav aria-label="Main" class="hidden lg:flex items-center gap-7 text-[0.95rem]">
+          <a class="text-ink hover:text-pine underline-offset-4 hover:underline py-3" href="#options">Services</a>
+          <a class="text-ink hover:text-pine underline-offset-4 hover:underline py-3" href="#how">How it works</a>
+          <a class="text-ink hover:text-pine underline-offset-4 hover:underline py-3" href="#faq">Questions</a>
+          <a class="text-ink hover:text-pine underline-offset-4 hover:underline py-3" href="#area">Area</a>
+        </nav>
+        <div class="flex items-center gap-3">
+          <a href={telHref} class="hidden md:flex flex-col items-end leading-tight no-underline min-h-12 justify-center">
+            <span class="text-[0.8rem] text-muted">Call us, {site.hours}</span>
+            <span class="font-bold text-pine-dark text-[1.15rem]">{site.phoneDisplay}</span>
+          </a>
+          <a href="#walkthrough" class="btn btn-primary hidden md:inline-flex">{cta}</a>
+          <a href={telHref} class="btn btn-secondary md:hidden !min-h-12 !px-4" aria-label={`Call ${site.phoneDisplay}`}>
+            <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1z"/></svg>
+            Call
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <main id="main">
+      <!-- HERO -->
+      <section class="mx-auto max-w-6xl px-5 pt-10 pb-14 md:pt-14 md:pb-20 grid gap-10 lg:grid-cols-[1.05fr_1fr] lg:items-center">
+        <div>
+          <p class="eyebrow mb-4">Full house buyouts across the GTA</p>
+          <h1 class="text-[2.3rem] sm:text-[2.8rem] lg:text-[3.3rem] font-semibold">One written offer for everything in the house.</h1>
+          <p class="mt-6 text-[1.1rem] text-muted max-w-xl">
+            Downsizing, settling an estate or helping a parent move? We walk through the home with you and give you one written offer for the contents. Once you accept, we empty the house quickly. No sale days, and no strangers in the home.
+          </p>
+          <div class="mt-8 flex flex-col sm:flex-row gap-3">
+            <a href="#walkthrough" class="btn btn-primary text-[1.05rem]">{cta}</a>
+            <a href={telHref} class="btn btn-secondary text-[1.05rem]">
+              <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1z"/></svg>
+              Call {site.phoneDisplay}
+            </a>
+          </div>
+          <p class="mt-5 text-[0.95rem] text-muted">Free and no obligation. Prefer a full estate sale instead? <a class="text-pine-dark font-bold underline underline-offset-4" href="#options">We do that too.</a></p>
+        </div>
+        <figure class="relative">
+          <Picture src={livingRoom} formats={['avif', 'webp']} widths={[480, 768, 1024]} sizes="(min-width: 1024px) 46vw, 100vw" alt="A sunlit living room with a floral armchair, a teak sideboard and framed paintings, each with a small paper price tag" loading="eager" fetchpriority="high" class="w-full h-auto rounded-2xl shadow-[0_20px_50px_-25px_rgba(31,42,37,.55)] aspect-[16/10] md:aspect-[16/8] lg:aspect-[16/10] object-cover" />
+        </figure>
+      </section>
+
+      <!-- OPTIONS -->
+      <section id="options" class="bg-paper border-y border-line">
+        <div class="mx-auto max-w-6xl px-5 py-16 md:py-20">
+          <p class="eyebrow mb-3">Two ways we can help</p>
+          <h2 class="text-[2rem] md:text-[2.5rem] font-semibold max-w-2xl">One offer for the whole house, or a full estate sale.</h2>
+          <p class="mt-4 text-muted max-w-2xl">A buyout is the simplest way to clear a home. If a sale would suit yours better, we will tell you honestly at the walkthrough.</p>
+
+          <div class="mt-10 grid gap-6 md:grid-cols-2">
+            <article class="bg-cream rounded-2xl border-2 border-pine overflow-hidden flex flex-col">
+              <Picture src={bungalow} formats={['avif', 'webp']} widths={[360, 540, 720, 900]} sizes="(min-width: 768px) 560px, calc(100vw - 2.5rem)" alt="A red brick bungalow on a quiet street in autumn" loading="lazy" class="w-full h-56 md:h-64 object-cover" />
+              <div class="p-6 md:p-8 flex flex-col grow">
+                <p class="eyebrow mb-2">Our main service</p>
+                <h3 class="text-[1.6rem] font-semibold">We buy the whole house</h3>
+                <p class="mt-2 text-muted">One written offer for the contents. Once you accept, we empty the house quickly.</p>
+                <ul class="mt-5 space-y-2">
+                  <li class="flex gap-3"><span aria-hidden="true" class="text-clay font-bold">&#10003;</span>One written offer after a free walkthrough</li>
+                  <li class="flex gap-3"><span aria-hidden="true" class="text-clay font-bold">&#10003;</span>No sale days and no strangers in the home</li>
+                  <li class="flex gap-3"><span aria-hidden="true" class="text-clay font-bold">&#10003;</span>We pack, remove and clear everything</li>
+                  <li class="flex gap-3"><span aria-hidden="true" class="text-clay font-bold">&#10003;</span>Scheduled around your closing or move date</li>
+                </ul>
+                <dl class="mt-6 pt-5 border-t border-line space-y-3 text-[0.95rem] mt-auto">
+                  <div><dt class="font-bold inline">How you are paid: </dt><dd class="inline text-muted">one agreed amount for the contents, set out in your written offer.</dd></div>
+                  <div><dt class="font-bold inline">A good fit when: </dt><dd class="inline text-muted">the house is sold or listed, time is short, or you would rather not host a sale.</dd></div>
+                </dl>
+                <a href="#walkthrough" class="btn btn-primary mt-6 !whitespace-normal text-center">{cta}</a>
+              </div>
+            </article>
+
+            <article class="bg-cream rounded-2xl border border-line overflow-hidden flex flex-col">
+              <Picture src={chinaCabinet} formats={['avif', 'webp']} widths={[360, 540, 720, 900]} sizes="(min-width: 768px) 560px, calc(100vw - 2.5rem)" alt="A wooden china cabinet of floral teacups and plates, each piece with a handwritten price" loading="lazy" class="w-full h-56 md:h-64 object-cover" />
+              <div class="p-6 md:p-8 flex flex-col grow">
+                <p class="eyebrow mb-2">Also available</p>
+                <h3 class="text-[1.6rem] font-semibold">We run the sale for you</h3>
+                <p class="mt-2 text-muted">We price, set up and run a 2 to 3 day estate sale in the home, then clear out what is left.</p>
+                <ul class="mt-5 space-y-2">
+                  <li class="flex gap-3"><span aria-hidden="true" class="text-clay font-bold">&#10003;</span>Sorting, research and pricing</li>
+                  <li class="flex gap-3"><span aria-hidden="true" class="text-clay font-bold">&#10003;</span>Staging the rooms and advertising the sale</li>
+                  <li class="flex gap-3"><span aria-hidden="true" class="text-clay font-bold">&#10003;</span>Running the sale days and handling payments</li>
+                  <li class="flex gap-3"><span aria-hidden="true" class="text-clay font-bold">&#10003;</span>Clearing what is left once the sale ends</li>
+                </ul>
+                <dl class="mt-6 pt-5 border-t border-line space-y-3 text-[0.95rem] mt-auto">
+                  <div><dt class="font-bold inline">How you are paid: </dt><dd class="inline text-muted">you keep the sale proceeds, less our commission. {commissionSentence}</dd></div>
+                  <div><dt class="font-bold inline">A good fit when: </dt><dd class="inline text-muted">there is some time, and the home has furniture, collectibles or lots of household goods.</dd></div>
+                </dl>
+                <a href="#walkthrough" class="btn btn-secondary mt-6 !whitespace-normal text-center">Ask about an estate sale</a>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- HOW IT WORKS -->
+      <section id="how" class="mx-auto max-w-6xl px-5 py-16 md:py-20">
+        <p class="eyebrow mb-3">How it works</p>
+        <h2 class="text-[2rem] md:text-[2.5rem] font-semibold max-w-2xl">Three simple steps, and you are never left guessing.</h2>
+        <ol class="mt-10 grid gap-6 md:grid-cols-3">
+          <li class="rounded-2xl bg-paper border border-line p-6 md:p-7">
+            <span class="font-serif text-[2.4rem] leading-none text-clay" aria-hidden="true">1</span>
+            <h3 class="mt-3 text-[1.35rem] font-semibold">A free walkthrough</h3>
+            <p class="mt-2 text-muted">We visit, look through the rooms and listen to what you need. Bring family or your realtor if you like.</p>
+          </li>
+          <li class="rounded-2xl bg-paper border border-line p-6 md:p-7">
+            <span class="font-serif text-[2.4rem] leading-none text-clay" aria-hidden="true">2</span>
+            <h3 class="mt-3 text-[1.35rem] font-semibold">Your offer in writing</h3>
+            <p class="mt-2 text-muted">You get one written offer for the contents, with dates and the plan for leftovers. Nothing happens until you agree. If a sale fits better, we put that plan in writing instead.</p>
+          </li>
+          <li class="rounded-2xl bg-paper border border-line p-6 md:p-7">
+            <span class="font-serif text-[2.4rem] leading-none text-clay" aria-hidden="true">3</span>
+            <h3 class="mt-3 text-[1.35rem] font-semibold">We take it from there</h3>
+            <p class="mt-2 text-muted">We pack up and clear everything, or run the sale and clear what is left. You get the house back empty{P.broomClean ? ' and broom-clean' : ''}.</p>
+          </li>
+        </ol>
+      </section>
+
+      <!-- LEFTOVERS -->
+      <section id="leftovers" class="bg-pine text-cream">
+        <div class="mx-auto max-w-6xl px-5 py-16 md:py-20 grid gap-10 md:grid-cols-2 md:items-center">
+          <Picture src={hallwayBoxes} formats={['avif', 'webp']} widths={[360, 540, 720, 900]} sizes="(min-width: 768px) 560px, calc(100vw - 2.5rem)" alt="Cardboard boxes marked Donate and Kitchen stacked in a carpeted upstairs hallway" loading="lazy" class="w-full h-auto rounded-2xl aspect-[4/3] object-cover" />
+          <div>
+            <p class="eyebrow mb-3 !text-clay-soft">What happens to what is left</p>
+            <h2 class="text-[2rem] md:text-[2.4rem] font-semibold !text-cream">Nothing is just thrown out.</h2>
+            <ul class="mt-7 space-y-5 text-[1.05rem]">
+              {leftovers.map((l) => (
+                <li><strong class="block text-white">{l.title}</strong><span class="text-[#e8e1d3]">{l.text}</span></li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- TRUST -->
+      <section id="trust" class="mx-auto max-w-6xl px-5 py-16 md:py-20">
+        <div class="grid gap-10 lg:grid-cols-[1fr_1.2fr] lg:items-start">
+          <div>
+            <p class="eyebrow mb-3">Why families trust us</p>
+            <h2 class="text-[2rem] md:text-[2.5rem] font-semibold">Careful with the home. Clear with you.</h2>
+            <Picture src={saleTable} formats={['avif', 'webp']} widths={[400, 640, 900, 1200]} sizes="(min-width: 1024px) 460px, 100vw" alt="A dining table set with brass candlesticks, old books, a mantel clock and cut glass, each with a handwritten price card" loading="lazy" class="mt-8 w-full h-auto rounded-2xl aspect-[4/3] md:aspect-[16/8] lg:aspect-[4/3] object-cover" />
+          </div>
+          <dl class="grid gap-x-8 gap-y-8 sm:grid-cols-2">
+            <div>
+              <dt class="font-serif text-[1.3rem] font-semibold text-pine-dark">Local across the GTA</dt>
+              <dd class="mt-2 text-muted">We work in homes across {regionList}, and we know how these sales run here.</dd>
+            </div>
+            <div>
+              <dt class="font-serif text-[1.3rem] font-semibold text-pine-dark">A written contract</dt>
+              <dd class="mt-2 text-muted">Every job starts with a signed agreement that sets out the dates, the terms and the plan for leftovers.</dd>
+            </div>
+            <div>
+              <dt class="font-serif text-[1.3rem] font-semibold text-pine-dark">Clear pricing</dt>
+              <dd class="mt-2 text-muted">A buyout is one written offer for the contents, with no hidden fees. For an estate sale, the rule is just as simple. {commissionSentence}</dd>
+            </div>
+            <div>
+              <dt class="font-serif text-[1.3rem] font-semibold text-pine-dark">No pressure, ever</dt>
+              <dd class="mt-2 text-muted">The walkthrough is free. If now is not the right time, that is perfectly fine.</dd>
+            </div>
+            <div class="sm:col-span-2">
+              <dt class="font-serif text-[1.3rem] font-semibold text-pine-dark">Help for executors and realtors</dt>
+              <dd class="mt-2 text-muted">We work to your listing or closing date and coordinate access with you.{P.executorSummary && ` ${P.executorSummary.text}`}</dd>
+            </div>
+          </dl>
+        </div>
+
+        {site.testimonials.length > 0 ? (
+          <div class="mt-14 grid gap-6 md:grid-cols-3">
+            {site.testimonials.map((t) => (
+              <figure class="rounded-2xl bg-paper border border-line p-6">
+                <blockquote class="font-serif text-[1.15rem] text-pine-dark">"{t.quote}"</blockquote>
+                <figcaption class="mt-4 text-muted text-[0.95rem]">{t.name}, {t.place}</figcaption>
+              </figure>
+            ))}
+          </div>
+        ) : anyPlaceholder && (
+          <div class="mt-14 rounded-2xl border-2 border-dashed border-line p-6 text-center text-muted">
+            [PLACEHOLDER: real client testimonials go here, only with their written permission. This box is hidden on the live site until then.]
+          </div>
+        )}
+      </section>
+
+      <!-- FAQ -->
+      <section id="faq" class="bg-paper border-y border-line">
+        <div class="mx-auto max-w-4xl px-5 py-16 md:py-20">
+          <p class="eyebrow mb-3">Questions</p>
+          <h2 class="text-[2rem] md:text-[2.5rem] font-semibold">Good questions to ask</h2>
+          <div class="mt-8">
+            {faqs.map((f) => (
+              <details class="faq">
+                <summary>{f.q}</summary>
+                <p class="answer">{f.a}</p>
+              </details>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <!-- SERVICE AREA -->
+      <section id="area" class="mx-auto max-w-6xl px-5 py-16 md:py-20">
+        <p class="eyebrow mb-3">Service area</p>
+        <h2 class="text-[2rem] md:text-[2.5rem] font-semibold">Across the Greater Toronto Area</h2>
+        <p class="mt-4 text-muted max-w-2xl">We serve homes in all five GTA regions, including the cities and towns within them. Just outside? Ask us anyway.</p>
+        <ul class="mt-8 grid grid-cols-2 sm:grid-cols-5 gap-3" aria-label="Regions we serve">
+          {site.regions.map((r) => (
+            <li class="rounded-xl bg-paper border border-line px-5 py-4 font-serif text-[1.3rem] font-semibold text-pine-dark last:col-span-2 sm:last:col-span-1 text-center">{r}</li>
+          ))}
+        </ul>
+      </section>
+
+      <!-- FORM -->
+      <section id="walkthrough" class="bg-sand border-t border-line">
+        <div class="mx-auto max-w-6xl px-5 py-16 md:py-20 grid grid-cols-1 gap-10 lg:grid-cols-[1fr_1.3fr]">
+          <div>
+            <p class="eyebrow mb-3">Free, written offer</p>
+            <h2 class="text-[2rem] md:text-[2.5rem] font-semibold">Get your free offer.</h2>
+            <p class="mt-4 text-muted">Leave your details and we will call you to set up a free walkthrough. After it, you get one written offer for the contents, or our honest advice if a sale would suit the home better. There is no obligation.{P.replyOneBusinessDay && ` ${P.replyOneBusinessDay.text}`}</p>
+            <div class="mt-8 rounded-2xl bg-paper border border-line p-6">
+              <p class="font-bold">Prefer to talk now?</p>
+              <a href={telHref} class="mt-2 inline-flex min-h-12 items-center font-serif text-[1.7rem] font-semibold text-pine-dark underline decoration-clay-soft decoration-2 underline-offset-4">{site.phoneDisplay}</a>
+              <p class="text-muted text-[0.95rem]">{site.hours}</p>
+            </div>
+          </div>
+
+          <div class="min-w-0">
+            <div id="thanks" class="state rounded-2xl bg-paper border border-line p-8" tabindex="-1" role="status">
+              <h3 class="text-[1.8rem] font-semibold">Thank you. We have your request.</h3>
+              <p class="mt-3 text-muted">We will call you{P.replyOneBusinessDay ? ' within one business day' : ' soon'} to set up a walkthrough at a time that suits you. If it is urgent, please call us at <a class="font-bold text-pine-dark" href={telHref}>{site.phoneDisplay}</a>.</p>
+              <p id="demo-note" class="mt-4 text-[0.9rem] rounded-lg bg-sand px-4 py-3" hidden>Demo mode: the form checked your details but nothing was sent.</p>
+            </div>
+
+            <div id="form-error" class="state mb-5 rounded-xl border-2 border-[#8a1f11] bg-paper p-5" tabindex="-1" role="alert">
+              <p class="font-bold text-[#8a1f11]">Sorry, we could not send that.</p>
+              <p class="text-muted">Please check each field and try again, or call us at <a class="font-bold text-pine-dark" href={telHref}>{site.phoneDisplay}</a>.</p>
+            </div>
+
+            <div id="too-large" class="state mb-5 rounded-xl border-2 border-[#8a1f11] bg-paper p-5" tabindex="-1" role="alert">
+              <p class="font-bold text-[#8a1f11]">Those photos were too large to send.</p>
+              <p class="text-muted">{tooLargeMessage}</p>
+              <p class="mt-3"><a class="btn btn-secondary" href="#f-name">Back to the form</a></p>
+            </div>
+
+            <form class="form-card min-w-0 rounded-2xl bg-paper border border-line p-6 md:p-8 grid gap-5" action="/api/walkthrough" method="post" enctype="multipart/form-data" data-walkthrough novalidate>
+              <div class="field">
+                <label for="f-name">Your name</label>
+                <input id="f-name" name="name" type="text" autocomplete="name" required minlength="2" maxlength="100" />
+                <p class="error" id="e-name" hidden></p>
+              </div>
+              <div class="field">
+                <label for="f-phone">Phone number <span class="hint">We will call you back on this number.</span></label>
+                <input id="f-phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" required pattern="[0-9()+\-. ]{10,20}" />
+                <p class="error" id="e-phone" hidden></p>
+              </div>
+              <div class="grid gap-5 sm:grid-cols-2">
+                <div class="field">
+                  <label for="f-region">Region</label>
+                  <select id="f-region" name="region" required>
+                    <option value="" selected disabled>Choose a region</option>
+                    {regionOptions.map((r) => <option value={r}>{r}</option>)}
+                  </select>
+                  <p class="error" id="e-region" hidden></p>
+                </div>
+                <div class="field">
+                  <label for="f-timeline">When do you need help?</label>
+                  <select id="f-timeline" name="timeline" required>
+                    <option value="" selected disabled>Choose a timeline</option>
+                    {timelines.map((t) => <option value={t.value}>{t.label}</option>)}
+                  </select>
+                  <p class="error" id="e-timeline" hidden></p>
+                </div>
+              </div>
+              <div class="field">
+                <label for="f-photos">Photos of the home <span class="hint">Optional. Up to {uploadLimits.maxFiles} photos help us prepare, but they are not needed.</span></label>
+                <input id="f-photos" name="photos" type="file" accept="image/*" multiple />
+                <p class="hint mt-2" id="photo-status" aria-live="polite"></p>
+                <p class="error" id="e-photos" hidden></p>
+              </div>
+              <div class="hp" aria-hidden="true">
+                <label for="f-website">Leave this empty</label>
+                <input id="f-website" name="website" type="text" tabindex="-1" autocomplete="off" />
+              </div>
+              <input type="hidden" name="started" value="" />
+              <p class="error font-bold text-[#8a1f11]" id="e-form" hidden></p>
+              <button type="submit" class="btn btn-primary w-full text-[1.1rem] !min-h-14 !whitespace-normal text-center">{cta}</button>
+              <p class="text-[0.9rem] text-muted">We only use your details to contact you about this request. We do not share them or add you to a mailing list.</p>
+            </form>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="bg-pine-dark text-[#e8e1d3]">
+      <div class="mx-auto max-w-6xl px-5 py-12 grid gap-8 md:grid-cols-3">
+        <div>
+          <p class="font-serif text-[1.4rem] font-semibold text-white">{site.businessName}</p>
+          <p class="mt-2">Full house buyouts and estate sales across {regionList}.</p>
+        </div>
+        <div>
+          <p class="font-bold text-white">Contact</p>
+          <p><a class="inline-flex min-h-12 items-center text-white underline underline-offset-4" href={telHref}>{site.phoneDisplay}</a></p>
+          <p><a class="inline-flex min-h-12 items-center text-white underline underline-offset-4" href={`mailto:${site.email}`}>{site.email}</a></p>
+          <p>{site.hours}</p>
+        </div>
+        <div>
+          <p class="font-bold text-white">Get started</p>
+          <a href="#walkthrough" class="btn btn-secondary mt-3 !whitespace-normal text-center">{cta}</a>
+        </div>
+      </div>
+      <div class="border-t border-white/15">
+        <p class="mx-auto max-w-6xl px-5 py-5 text-[0.85rem]">&copy; {year} {site.businessName}. This site does not use tracking cookies or analytics.</p>
+      </div>
+    </footer>
+
+    <!-- Mobile click-to-call bar -->
+    <div data-callbar class="md:hidden fixed inset-x-0 bottom-0 z-40 bg-paper/95 backdrop-blur border-t border-line px-3 py-3 grid grid-cols-2 gap-3" style="padding-bottom: max(0.75rem, env(safe-area-inset-bottom));">
+      <a href="#walkthrough" class="btn btn-primary !px-3 !whitespace-normal text-center">{cta}</a>
+      <a href={telHref} class="btn btn-secondary !px-3">
+        <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1z"/></svg>
+        Call now
+      </a>
+    </div>
+
+    <script>
+      import '../scripts/form';
+    </script>
+  </body>
+</html>
