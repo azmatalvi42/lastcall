@@ -1,0 +1,30 @@
+@font-face { font-family: "Fraunces"; src: url("fonts/fraunces-latin-opsz-normal.woff2") format("woff2"); font-weight: 100 900; }
+@font-face { font-family: "Atkinson"; src: url("fonts/atkinson-hyperlegible-latin-400-normal.woff2") format("woff2"); font-weight: 400; }
+@font-face { font-family: "Atkinson"; src: url("fonts/atkinson-hyperlegible-latin-700-normal.woff2") format("woff2"); font-weight: 700; }
+:root { --cream:#f6f0e4; --paper:#fbf8f1; --ink:#1f2a25; --muted:#47524c; --pine:#1f4034; --pine-dark:#163026; --clay:#8f4522; --clay-soft:#e9c9a8; }
+* { box-sizing: border-box; margin: 0; }
+html, body { width: 1080px; height: var(--h); overflow: hidden; }
+body { --h: 1350px; font-family: "Atkinson", system-ui, sans-serif; color: var(--ink); background: var(--cream); position: relative; }
+body.sq { --h: 1080px; }
+.photo { position: absolute; inset: 0 0 auto 0; height: calc(var(--h) - var(--band)); background-size: cover; background-position: var(--pos, center); }
+body { --band: 430px; }
+body.sq { --band: 380px; }
+.band { position: absolute; left: 0; right: 0; bottom: 0; height: var(--band); background: var(--cream); padding: 48px 72px 0; }
+.band::before { content: ""; position: absolute; left: 0; right: 0; top: -14px; height: 14px; background: var(--clay); }
+.eyebrow { font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--clay); font-size: 26px; }
+h1 { font-family: "Fraunces", Georgia, serif; font-optical-sizing: auto; font-weight: 600; color: var(--pine-dark); font-size: 66px; line-height: 1.04; letter-spacing: -.01em; margin-top: 12px; text-wrap: balance; max-width: 900px; }
+.sq h1 { font-size: 58px; }
+.row { position: absolute; left: 72px; right: 72px; bottom: 56px; display: flex; align-items: center; justify-content: space-between; }
+.sq .row { bottom: 46px; }
+.cta { background: var(--pine); color: #fff; font-weight: 700; font-size: 32px; padding: 24px 38px; border-radius: 14px; }
+.brand { text-align: right; }
+.brand .name { font-family: "Fraunces", Georgia, serif; font-weight: 600; font-size: 30px; color: var(--pine-dark); }
+.brand .phone { font-weight: 700; font-size: 30px; color: var(--ink); margin-top: 4px; letter-spacing: .01em; }
+.badge { position: absolute; top: 48px; left: 48px; background: rgba(251,248,241,.94); color: var(--pine-dark); font-weight: 700; font-size: 26px; padding: 14px 24px; border-radius: 999px; }
+/* Flagship (buyout) ad: dark band so it stands out as the lead offer. */
+.flagship .band { background: var(--pine-dark); }
+.flagship .eyebrow { color: var(--clay-soft); }
+.flagship h1 { color: var(--cream); }
+.flagship .cta { background: var(--clay-soft); color: var(--pine-dark); }
+.flagship .brand .name { color: #fff; }
+.flagship .brand .phone { color: #e8e1d3; }
