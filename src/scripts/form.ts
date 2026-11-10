@@ -3,8 +3,6 @@
 // forms still post normally and the server redirects back to /#thanks or /#form-error.
 import { mountSaleScenes } from './sale-scenes';
 
-const SCENE_MOVE_MS = 700;
-
 const form = document.querySelector<HTMLFormElement>('form[data-walkthrough]');
 const formArea = document.querySelector<HTMLElement>('[data-capture-form]');
 const thanks = document.getElementById('thanks');
@@ -25,14 +23,6 @@ async function post(target: HTMLFormElement, data: FormData): Promise<Reply> {
 }
 
 /** Moves to the form the same way a link to it does, so the page's section changer stays in charge. */
-function goToCapture() {
-  const link = document.createElement('a');
-  link.href = '#walkthrough';
-  document.body.append(link);
-  link.click();
-  link.remove();
-}
-
 if (form) {
   const fieldNames = ['name', 'email', 'phone', 'location'];
   const input = (name: string) => form.querySelector<HTMLInputElement>(`[name="${name}"]`)!;
@@ -132,38 +122,5 @@ if (form) {
       submit.disabled = false;
       submit.textContent = label;
     }
-  });
-
-  // The hero's email box saves the lead straight away, then brings them here with their email filled in.
-  document.querySelectorAll<HTMLFormElement>('form[data-capture]').forEach((hero) => {
-    const button = hero.querySelector<HTMLButtonElement>('button[type="submit"]')!;
-    const email = hero.querySelector<HTMLInputElement>('input[type="email"]')!;
-
-    hero.addEventListener('submit', async (event) => {
-      event.preventDefault();
-      const label = button.textContent;
-      button.disabled = true;
-      button.textContent = 'Sending...';
-      let failure: string | null = null;
-      try {
-        const reply = await post(hero, new FormData(hero));
-        if (reply.ok) {
-          if (demoNote) demoNote.hidden = !reply.demo;
-        } else failure = reply.errors?.email ?? reply.errors?.form ?? 'Sorry, something went wrong. Please try again or call us.';
-      } catch {
-        failure = 'We could not reach the server. Please check your connection, or call us.';
-      }
-      button.disabled = false;
-      button.textContent = label;
-
-      input('email').value = email.value.trim();
-      hero.reset();
-      goToCapture();
-      window.setTimeout(() => {
-        syncScenes();
-        if (failure) setError('form', failure);
-        input('name').focus({ preventScroll: true });
-      }, SCENE_MOVE_MS);
-    });
   });
 }

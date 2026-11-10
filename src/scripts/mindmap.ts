@@ -16,8 +16,9 @@ const LASTCALL_ID = 'hub-lastcall';
 type Layout = { wide: boolean; at: (id: string) => [number, number] };
 
 /**
- * Always flows top to bottom, in step with the page. Wide screens get one band of details, narrow ones
- * get two columns. Positions are shares of the stage.
+ * Wide screens flow left to right across a full-screen stage: sale styles, the two hubs (you on top,
+ * Lastcall below), their details in a zig-zag pair of columns, then the goal. Narrow screens flow top to
+ * bottom with the details in two columns. Positions are shares of the stage.
  */
 function makeLayout(wide: boolean, style: SaleStyleMap): Layout {
   const spots = new Map<string, [number, number]>();
@@ -25,13 +26,15 @@ function makeLayout(wide: boolean, style: SaleStyleMap): Layout {
   const lastcalls = style.lastcall.map((_, i) => `lastcall-${i}`);
 
   if (wide) {
-    saleStyles.forEach((s, i) => spots.set(`style-${s.id}`, [0.5 + (i - 2) * 0.16, 0.085]));
-    const leaves = [...sellers, ...lastcalls];
-    const slot = (i: number) => (i + 0.5) / leaves.length;
-    leaves.forEach((id, i) => spots.set(id, [slot(i), 0.545 + (i % 2 === 0 ? -0.035 : 0.035)]));
-    spots.set(SELLER_ID, [slot((sellers.length - 1) / 2), 0.29]);
-    spots.set(LASTCALL_ID, [slot(sellers.length + (lastcalls.length - 1) / 2), 0.29]);
-    spots.set(GOAL_ID, [0.5, 0.85]);
+    saleStyles.forEach((s, i) => spots.set(`style-${s.id}`, [0.07, 0.5 + (i - 2) * 0.19]));
+    const place = (ids: string[], centre: number) => {
+      ids.forEach((id, i) => spots.set(id, [i % 2 === 0 ? 0.46 : 0.65, centre + (i - (ids.length - 1) / 2) * 0.11]));
+    };
+    spots.set(SELLER_ID, [0.27, 0.26]);
+    spots.set(LASTCALL_ID, [0.27, 0.74]);
+    place(sellers, 0.26);
+    place(lastcalls, 0.74);
+    spots.set(GOAL_ID, [0.87, 0.5]);
   } else {
     const row = [[0.18, 0.05], [0.5, 0.05], [0.82, 0.05], [0.34, 0.135], [0.66, 0.135]];
     saleStyles.forEach((s, i) => spots.set(`style-${s.id}`, row[i] as [number, number]));
@@ -80,7 +83,11 @@ export function mountMindMap(root: HTMLElement) {
     const ay = from.y * h;
     const bx = to.x * w;
     const by = to.y * h;
-    const d = `M${ax} ${ay}C${ax} ${ay + (by - ay) / 2} ${bx} ${by - (by - ay) / 2} ${bx} ${by}`;
+    const mx = (bx - ax) / 2;
+    const my = (by - ay) / 2;
+    const d = layout.wide
+      ? `M${ax} ${ay}C${ax + mx} ${ay} ${bx - mx} ${by} ${bx} ${by}`
+      : `M${ax} ${ay}C${ax} ${ay + my} ${bx} ${by - my} ${bx} ${by}`;
     edge.base.setAttribute('d', d);
     edge.flow.setAttribute('d', d);
   };
@@ -340,6 +347,7 @@ export function mountMindMap(root: HTMLElement) {
     if (wide !== layout.wide) {
       layout = makeLayout(wide, style);
       stage.dataset.layout = wide ? 'wide' : 'narrow';
+      root.dataset.layout = stage.dataset.layout;
       reset.hidden = true;
       applyLayout(false);
       return;
@@ -348,6 +356,7 @@ export function mountMindMap(root: HTMLElement) {
   };
 
   stage.dataset.layout = layout.wide ? 'wide' : 'narrow';
+  root.dataset.layout = stage.dataset.layout;
   new ResizeObserver(fit).observe(stage);
 
   selectStyle(style);

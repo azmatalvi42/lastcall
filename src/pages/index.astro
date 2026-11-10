@@ -116,18 +116,9 @@ const logoHeights: Record<string, string> = {
         </div>
         <img class="hero-logo" src="/logos/last-call-logo-light.png" alt="Last Call" width="900" height="227" fetchpriority="high" decoding="async" />
         <div class="hero-copy relative z-10 mx-auto w-full max-w-5xl px-5 py-28 text-center">
-          <h1>Loved before.<br><em>Loved again.</em></h1>
-          <p class="hero-lede">Let Lastcall handle the sale. You get what it's worth.</p>
-          <form class="capture-bar hero-email" action="/api/walkthrough" method="post" enctype="multipart/form-data" data-capture>
-            <label class="sr-only" for="hero-email">Your email</label>
-            <input id="hero-email" name="email" type="email" required maxlength="200" autocomplete="email" inputmode="email" enterkeyhint="send" placeholder="Your email" />
-            <button type="submit">{cta}</button>
-            <div class="hp" aria-hidden="true">
-              <label for="hero-website">Leave this empty</label>
-              <input id="hero-website" name="website" type="text" tabindex="-1" autocomplete="off" />
-            </div>
-            <input type="hidden" name="started" value="" />
-          </form>
+          <h1>Loved once.<br><em>Loved forever.</em></h1>
+          <p class="hero-lede">You've made the memories. Now let someone else make theirs.</p>
+          <a class="hero-cta" href="#how-we-work">Let Last Call handle it</a>
         </div>
       </section>
       <script>
@@ -251,7 +242,6 @@ const logoHeights: Record<string, string> = {
               <span class="panel-plus" aria-hidden="true"></span>
             </button>
             <div class="panel-open-copy">
-              <img class="panel-brand" src="/logos/last-call-logo.png" alt="Last Call" width="900" height="227" loading="lazy" decoding="async" />
               <span class="panel-rule" aria-hidden="true"></span>
               <h2>Estate<br>Auctions</h2>
               <p class="panel-kicker">Rare finds. Real value.</p>
@@ -268,7 +258,6 @@ const logoHeights: Record<string, string> = {
               <span class="panel-plus" aria-hidden="true"></span>
             </button>
             <div class="panel-open-copy">
-              <img class="panel-brand" src="/logos/last-call-logo.png" alt="Last Call" width="900" height="227" loading="lazy" decoding="async" />
               <span class="panel-rule" aria-hidden="true"></span>
               <h2>Online<br>Sales</h2>
               <p class="panel-kicker">Listed online. Found by buyers.</p>
@@ -285,7 +274,6 @@ const logoHeights: Record<string, string> = {
               <span class="panel-plus" aria-hidden="true"></span>
             </button>
             <div class="panel-open-copy">
-              <img class="panel-brand" src="/logos/last-call-logo.png" alt="Last Call" width="900" height="227" loading="lazy" decoding="async" />
               <span class="panel-rule" aria-hidden="true"></span>
               <h2>Estate<br>Sales</h2>
               <p class="panel-kicker">See it in the home.</p>
@@ -302,7 +290,6 @@ const logoHeights: Record<string, string> = {
               <span class="panel-plus" aria-hidden="true"></span>
             </button>
             <div class="panel-open-copy">
-              <img class="panel-brand" src="/logos/last-call-logo.png" alt="Last Call" width="900" height="227" loading="lazy" decoding="async" />
               <span class="panel-rule" aria-hidden="true"></span>
               <h2>Garage<br>Sales</h2>
               <p class="panel-kicker">A Saturday, on the driveway.</p>
@@ -319,7 +306,6 @@ const logoHeights: Record<string, string> = {
               <span class="panel-plus" aria-hidden="true"></span>
             </button>
             <div class="panel-open-copy">
-              <img class="panel-brand" src="/logos/last-call-logo.png" alt="Last Call" width="900" height="227" loading="lazy" decoding="async" />
               <span class="panel-rule" aria-hidden="true"></span>
               <h2>Buyout<br>Offers</h2>
               <p class="panel-kicker">One offer. The house cleared.</p>
@@ -527,10 +513,9 @@ const logoHeights: Record<string, string> = {
       </script>
 
       <!-- HOW WE WORK TOGETHER -->
-      <section id="how-we-work" class="mx-auto max-w-6xl px-5 py-16 md:py-20">
+      <section id="how-we-work" class="mm-section px-5 py-16 md:px-10 md:py-20">
         <div class="mm" data-mindmap hidden>
           <div class="mm-head">
-            <p class="eyebrow mb-3">How we work together</p>
             <h2>You bring the home. We bring the rest.</h2>
             <p class="mt-3 text-muted">Pick a style of sale to see what you bring, what we bring, and where it all meets. Select any octagon to read more<span class="mm-drag-hint">, or drag it around</span>.</p>
           </div>
@@ -591,7 +576,6 @@ const logoHeights: Record<string, string> = {
         </div>
         <div class="quiz" data-quiz>
           <div class="quiz-top">
-            <h2>How it works</h2>
             <button type="button" class="quiz-back" data-quiz-back hidden>
               <svg aria-hidden="true" width="14" height="14" viewBox="0 0 14 14"><path d="M8.8 2.6 4.4 7l4.4 4.4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
               Back
@@ -802,10 +786,6 @@ const logoHeights: Record<string, string> = {
       <section id="walkthrough" class="quiz-scene capture" data-mood="0">
         <div class="maze-panel" data-sale-scenes aria-hidden="true"></div>
         <div class="quiz">
-          <div class="quiz-top">
-            <h2>Get started</h2>
-          </div>
-
           <div id="form-error" class="state capture-alert" tabindex="-1" role="alert">
             <p>Sorry, we could not send that. Please check your details and try again, or call <a href={telHref}>{site.phoneDisplay}</a>.</p>
           </div>

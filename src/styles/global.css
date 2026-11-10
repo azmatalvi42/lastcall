@@ -252,7 +252,6 @@ em, i { font-style: italic; }
 }
 .panel.is-open .panel-open-copy { opacity: 1; }
 /* The logo, as an image: light on dark scenes, ink on the paper panels. */
-.panel-brand { display: block; width: auto; height: 2.25rem; }
 .panel-rule {
   display: block;
   width: 2.4rem;
@@ -1333,7 +1332,7 @@ html:not(.js) .bingo-front { padding-top: 2rem; }
   top: clamp(.75rem, 2vw, 1.5rem);
   left: clamp(.75rem, 2vw, 1.75rem);
   width: auto;
-  height: clamp(2.2rem, 3.8vw, 3.2rem);
+  height: clamp(1.6rem, 2.6vw, 2.25rem);
   filter: drop-shadow(0 1px 8px rgba(18, 12, 8, .55));
 }
 
@@ -1531,53 +1530,24 @@ html:not(.js) .bingo-front { padding-top: 2rem; }
   font-size: clamp(1.15rem, 2vw, 1.45rem);
   text-shadow: 0 1px 12px rgba(18, 12, 8, 0.35);
 }
-.capture-bar {
-  position: relative;
-  display: flex;
-  width: min(100%, 33rem);
-  margin: 0;
-  padding: .3rem;
+.hero-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 3.25rem;
+  margin-top: 1.75rem;
+  padding: 0 1.9rem;
   border-radius: 999px;
   background: #fff;
-  box-shadow: 0 14px 40px rgba(18, 12, 8, .28);
-  transition: box-shadow .2s ease;
-}
-.capture-bar:focus-within { box-shadow: 0 0 0 3px #eda63f, 0 14px 40px rgba(18, 12, 8, .28); }
-.capture-bar input[type='email'] {
-  flex: 1;
-  min-width: 0;
-  min-height: 3.25rem;
-  padding: 0 1.2rem;
-  border: 0;
-  background: transparent;
   color: var(--color-pine-dark);
-  font: inherit;
   font-size: 1.0625rem;
-  outline: none;
-}
-.capture-bar input[type='email']::placeholder { color: #746d65; }
-.capture-bar button {
-  flex: none;
-  min-height: 3.25rem;
-  padding: 0 1.5rem;
-  border: 0;
-  border-radius: 999px;
-  background: var(--color-pine-dark);
-  color: #fff;
-  font: inherit;
-  font-size: 1rem;
   font-weight: 600;
   white-space: nowrap;
-  cursor: pointer;
-  transition: background-color .15s ease;
+  box-shadow: 0 14px 40px rgba(18, 12, 8, .28);
+  transition: background-color .15s ease, transform .15s ease;
 }
-.capture-bar button:hover { background: #000; }
-.capture-bar button:disabled { opacity: .7; cursor: progress; }
-.hero-email { margin: 1.75rem auto 0; }
-@media (max-width: 29.99rem) {
-  .capture-bar { flex-direction: column; gap: .3rem; padding: .35rem; border-radius: 1.75rem; }
-  .capture-bar input[type='email'] { text-align: center; }
-}
+.hero-cta:hover { background: var(--color-cream); transform: translateY(-1px); }
+.hero-cta:focus-visible { outline: 3px solid #eda63f; outline-offset: 3px; }
 .capture .quiz-note a, .capture-done a, .capture-alert a { color: inherit; font-weight: 600; text-decoration: underline; text-underline-offset: 3px; white-space: nowrap; }
 .capture-form[hidden] { display: none; }
 .capture-q {
@@ -1932,10 +1902,29 @@ html:not(.js) .bingo-front { padding-top: 2rem; }
   --octagon: polygon(29% 0, 71% 0, 100% 29%, 100% 71%, 71% 100%, 29% 100%, 0 71%, 0 29%);
   position: relative;
   margin-top: 1.75rem;
-  aspect-ratio: 1.293;
-  container-type: inline-size;
+  container-type: size;
 }
-.mm-stage[data-layout='narrow'] { aspect-ratio: auto; height: 1180px; }
+.mm-stage[data-layout='narrow'] { height: 1180px; }
+/* Wide: the map takes the whole screen and runs left to right. */
+.mm-section:has(.mm[data-layout='wide']) { padding-block: 0; }
+.mm[data-layout='wide'] {
+  display: flex;
+  flex-direction: column;
+  height: 100svh;
+  min-height: 40rem;
+  padding-block: clamp(1.25rem, 3vh, 2.5rem) 3.5rem; /* Clears the floating scene nav. */
+}
+.mm[data-layout='wide'] .mm-head { max-width: none; display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: .5rem 2rem; }
+.mm[data-layout='wide'] .mm-head p:last-child { max-width: 34rem; margin: 0; }
+.mm[data-layout='wide'] .mm-stage { flex: 1 1 0; min-height: 0; margin-top: 1rem; }
+.mm[data-layout='wide'] .mm-foot { position: static; margin-top: .25rem; }
+.mm-stage[data-layout='wide'] .mm-style { --size: min(9cqw, 16cqh); }
+.mm-stage[data-layout='wide'] .mm-hub { --size: min(13cqw, 26cqh); }
+.mm-stage[data-layout='wide'] .mm-leaf { --size: max(5.75rem, min(11.5cqw, 17.5cqh)); }
+.mm-stage[data-layout='wide'] .mm-goal { --size: min(18cqw, 36cqh); }
+.mm-stage[data-layout='wide'] .mm-oct { font-size: clamp(.78rem, min(1.4cqw, 2.3cqh), 1.0625rem); }
+.mm-stage[data-layout='wide'] .mm-hub .mm-oct { font-size: clamp(1.1rem, min(2.1cqw, 3.6cqh), 1.7rem); }
+.mm-stage[data-layout='wide'] .mm-goal .mm-oct { font-size: clamp(1.3rem, min(2.6cqw, 4.4cqh), 2.15rem); }
 .mm-edges, .mm-nodes { position: absolute; inset: 0; width: 100%; height: 100%; }
 .mm-nodes { pointer-events: none; }
 .mm-edge, .mm-flow { fill: none; transition: opacity .2s ease, stroke .2s ease; }
@@ -2447,7 +2436,6 @@ html.scene-nav .scene.quiz-scene {
   .panel-vert { left: 5.8rem; transform: translateY(-50%); writing-mode: horizontal-tb; font-size: 1.4rem; }
   .panel-plus { top: 50%; bottom: auto; left: auto; right: .8rem; width: 1.9rem; height: 1.9rem; transform: translateY(-50%); }
   .panel-sketch { top: auto; left: 0; height: 44%; }
-  .panel--drawn .panel-brand,
   .panel--drawn .panel-rule { display: none; }
   .panel--drawn .panel-open-copy h2 { font-size: 2.3rem; }
   .panel--drawn .panel-kicker { margin-top: .7rem; }
@@ -2498,6 +2486,37 @@ html.scene-nav .scene.quiz-scene {
   .trusted--quiz .eyebrow { padding-left: 1rem; }
   .trusted--quiz .logo-track { gap: 2.4rem; }
   .trusted--quiz .logo-mark { zoom: .85; }
+}
+
+/* Desktop: the drawing fills the right half of the screen, edge to edge. The SVG keeps its own
+   proportions inside, so the zoom into the maze door still lands on the door. */
+@media not ((max-width: 900px) or (max-aspect-ratio: 21/20) or (max-height: 500px)) {
+  .quiz-scene {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+    align-items: stretch;
+    column-gap: clamp(2rem, 5vw, 5rem);
+    padding-block: 0;
+    padding-right: 0;
+  }
+  .quiz { align-self: center; align-content: center; padding-block: 2rem 4.5rem; }
+  .maze-panel {
+    align-self: stretch;
+    height: auto;
+    max-height: none;
+    aspect-ratio: auto;
+    display: grid;
+    place-items: center;
+    container-type: size;
+    border: 0;
+    border-left: 1px solid var(--color-line);
+    border-radius: 0;
+    box-shadow: none;
+    transform: none;
+  }
+  .maze-panel svg { width: min(92cqw, 112cqh); height: auto; aspect-ratio: 150 / 120; }
+  .quiz-step legend, .quiz-result h3, .quiz-hold-line, .capture-q { font-size: clamp(2.4rem, 4.3vw, 4.75rem); }
+  #how .maze-panel { max-height: none; }
+  #how .trusted--quiz { margin-right: 0; }
 }
 
 /* Shopper call to action, bottom centre of the Ontario map */
