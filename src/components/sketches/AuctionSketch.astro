@@ -1,0 +1,92 @@
+---
+// Estate auction, drawn in ink: bids go up on paddles, the gavel falls, SOLD.
+---
+<svg class="sketch sk-auction" viewBox="0 0 600 600" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false">
+  <g class="sk-ink">
+    <!-- floor -->
+    <path class="d" pathLength="1" d="M24 522 C150 516 300 526 576 518" />
+    <path class="hatch-fill" d="M300 528 C340 520 430 520 470 528 C430 534 340 534 300 528 Z" />
+
+    <!-- price board hanging from the ceiling -->
+    <path class="d" pathLength="1" d="M332 0 V96 M448 0 V96" />
+    <rect class="paper" x="306" y="96" width="168" height="70" rx="7" />
+    <text class="sk-t sk-small" x="390" y="117">CURRENT BID</text>
+    <g class="au-price">
+      <text class="sk-t sk-big au-b1" x="390" y="154">$420</text>
+      <text class="sk-t sk-big au-b2" x="390" y="154">$560</text>
+      <text class="sk-t sk-big au-b3" x="390" y="154">$780</text>
+    </g>
+
+    <!-- pedestal with the lot -->
+    <path class="paper d" pathLength="1" d="M318 372 V520 H442 V372 Z" />
+    <rect class="hatch-fill" x="410" y="374" width="30" height="144" />
+    <path class="paper d" pathLength="1" d="M300 372 H460 L452 354 H308 Z" />
+    <g class="au-vase">
+      <path class="paper d" pathLength="1" d="M352 354 C338 330 334 300 350 278 C362 262 368 252 366 238 L360 226 H400 L394 238 C392 252 398 262 410 278 C426 300 422 330 408 354 Z" />
+      <path class="pop pop-b" d="M352 354 C338 330 334 300 350 278 C362 262 368 252 366 238 L360 226 H400 L394 238 C392 252 398 262 410 278 C426 300 422 330 408 354 Z" />
+      <path class="thin" d="M343 300 C368 310 392 310 418 300 M346 318 C368 326 392 326 415 318" />
+      <path class="thin" d="M372 270 C376 282 384 282 388 270" />
+    </g>
+    <g class="au-tag">
+      <path class="thin" d="M452 362 Q462 384 466 400" />
+      <rect class="paper" x="440" y="398" width="66" height="32" rx="5" />
+      <circle class="thin" cx="452" cy="414" r="3.5" />
+      <text class="sk-t sk-tag" x="482" y="419">LOT 27</text>
+    </g>
+    <g class="au-spark">
+      <path class="pop pop-y" d="M320 236 l5 -14 l5 14 l14 5 l-14 5 l-5 14 l-5 -14 l-14 -5 Z" />
+      <path class="thin" d="M320 236 l5 -14 l5 14 l14 5 l-14 5 l-5 14 l-5 -14 l-14 -5 Z" />
+    </g>
+    <g class="au-spark au-spark2">
+      <path class="pop pop-y" d="M430 222 l4 -10 l4 10 l10 4 l-10 4 l-4 10 l-4 -10 l-10 -4 Z" />
+      <path class="thin" d="M430 222 l4 -10 l4 10 l10 4 l-10 4 l-4 10 l-4 -10 l-10 -4 Z" />
+    </g>
+
+    <!-- lectern, sound block and gavel -->
+    <path class="paper d" pathLength="1" d="M62 314 L82 520 H200 L220 314 Z" />
+    <path class="hatch-fill" d="M196 316 L218 316 L198 518 L184 518 Z" />
+    <rect class="paper d" pathLength="1" x="42" y="298" width="196" height="16" rx="4" />
+    <circle class="d" pathLength="1" cx="141" cy="392" r="26" />
+    <path class="pop pop-o" d="M141 366 a26 26 0 1 1 -0.1 0 Z" />
+    <text class="sk-t sk-mid" x="141" y="400">LC</text>
+    <rect class="paper" x="92" y="284" width="86" height="15" rx="5" />
+    <rect class="pop pop-y" x="92" y="284" width="86" height="15" rx="5" />
+    <g class="au-hit">
+      <path d="M100 270 l-16 -10 M98 256 l-20 -2 M106 244 l-12 -14" />
+    </g>
+    <g class="au-gavel">
+      <path class="paper" d="M158 246 L262 236 Q272 242 262 250 L158 260 Z" />
+      <rect class="paper" x="112" y="226" width="46" height="57" rx="9" />
+      <rect class="pop pop-o" x="112" y="226" width="46" height="57" rx="9" />
+      <path class="thin" d="M113 240 H157 M113 269 H157" />
+    </g>
+
+    <!-- SOLD -->
+    <g class="au-sold">
+      <g transform="translate(500 262) rotate(-10)">
+        <path class="paper" d="M0.0 -64.0 L10.5 -45.8 L27.8 -57.7 L29.3 -36.7 L50.0 -39.9 L42.3 -20.4 L62.4 -14.2 L47.0 0.0 L62.4 14.2 L42.3 20.4 L50.0 39.9 L29.3 36.7 L27.8 57.7 L10.5 45.8 L0.0 64.0 L-10.5 45.8 L-27.8 57.7 L-29.3 36.7 L-50.0 39.9 L-42.3 20.4 L-62.4 14.2 L-47.0 0.0 L-62.4 -14.2 L-42.3 -20.4 L-50.0 -39.9 L-29.3 -36.7 L-27.8 -57.7 L-10.5 -45.8 Z" />
+        <path class="pop pop-y" d="M0.0 -64.0 L10.5 -45.8 L27.8 -57.7 L29.3 -36.7 L50.0 -39.9 L42.3 -20.4 L62.4 -14.2 L47.0 0.0 L62.4 14.2 L42.3 20.4 L50.0 39.9 L29.3 36.7 L27.8 57.7 L10.5 45.8 L0.0 64.0 L-10.5 45.8 L-27.8 57.7 L-29.3 36.7 L-50.0 39.9 L-42.3 20.4 L-62.4 14.2 L-47.0 0.0 L-62.4 -14.2 L-42.3 -20.4 L-50.0 -39.9 L-29.3 -36.7 L-27.8 -57.7 L-10.5 -45.8 Z" />
+        <text class="sk-t sk-sold" x="0" y="11">SOLD!</text>
+      </g>
+    </g>
+
+    <!-- bidders' paddles, in the foreground -->
+    <g class="au-paddle au-p1">
+      <path class="paper" d="M144 500 H156 V820 H144 Z" />
+      <circle class="paper" cx="150" cy="468" r="38" />
+      <text class="sk-t sk-num" x="150" y="481">12</text>
+    </g>
+    <g class="au-paddle au-p2">
+      <path class="paper" d="M264 500 H276 V820 H264 Z" />
+      <circle class="paper" cx="270" cy="468" r="38" />
+      <circle class="pop pop-b" cx="270" cy="468" r="38" />
+      <text class="sk-t sk-num" x="270" y="481">48</text>
+    </g>
+    <g class="au-paddle au-p3">
+      <path class="paper" d="M514 500 H526 V820 H514 Z" />
+      <circle class="paper" cx="520" cy="468" r="38" />
+      <circle class="pop pop-o" cx="520" cy="468" r="38" />
+      <text class="sk-t sk-num" x="520" y="481">27</text>
+    </g>
+  </g>
+</svg>

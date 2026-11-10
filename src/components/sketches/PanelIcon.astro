@@ -1,0 +1,62 @@
+---
+// Small ink icons for the collapsed service strips.
+interface Props { name: 'auction' | 'online' | 'estate' | 'garage' | 'buyout' }
+const { name } = Astro.props;
+---
+<svg class={`panel-icon pi-${name}`} viewBox="0 0 64 64" aria-hidden="true" focusable="false">
+  <g class="sk-ink">
+    {name === 'auction' && (
+      <>
+        <rect class="paper" x="10" y="46" width="34" height="9" rx="3" />
+        <rect class="pop pop-y" x="10" y="46" width="34" height="9" rx="3" />
+        <g class="pi-gavel">
+          <path class="paper" d="M32 30 L56 24 L57 30 L33 36 Z" />
+          <rect class="paper" x="16" y="22" width="17" height="22" rx="4" />
+          <rect class="pop pop-o" x="16" y="22" width="17" height="22" rx="4" />
+        </g>
+      </>
+    )}
+    {name === 'online' && (
+      <>
+        <rect class="paper" x="19" y="7" width="27" height="50" rx="6" />
+        <circle class="paper" cx="32.5" cy="29" r="8" />
+        <circle class="pop pop-b" cx="32.5" cy="29" r="8" />
+        <path class="thin" d="M28 51 h9" />
+        <g class="pi-flash">
+          <path class="pop pop-o" d="M52 10 l2 -6 l2 6 l6 2 l-6 2 l-2 6 l-2 -6 l-6 -2 Z" />
+          <path class="thin" d="M52 10 l2 -6 l2 6 l6 2 l-6 2 l-2 6 l-2 -6 l-6 -2 Z" />
+        </g>
+      </>
+    )}
+    {name === 'estate' && (
+      <g class="pi-tag">
+        <path class="thin" d="M44 4 V18" />
+        <path class="paper" d="M44 18 L58 32 L36 58 L12 34 L30 18 Z" />
+        <path class="pop pop-y" d="M44 18 L58 32 L36 58 L12 34 L30 18 Z" />
+        <circle class="thin paper" cx="43" cy="25" r="3.5" />
+        <text class="sk-t pi-dollar" x="35" y="46">$</text>
+      </g>
+    )}
+    {name === 'garage' && (
+      <>
+        <path class="paper" d="M6 30 L32 9 L58 30 V56 H6 Z" />
+        <rect class="paper" x="16" y="32" width="32" height="24" />
+        <g class="pi-door">
+          <rect class="pop pop-o" x="16" y="32" width="32" height="24" />
+          <path class="thin" d="M16 38 H48 M16 44 H48 M16 50 H48" />
+        </g>
+      </>
+    )}
+    {name === 'buyout' && (
+      <>
+        <rect class="paper" x="6" y="18" width="48" height="34" rx="3" />
+        <path class="thin" d="M6 20 L30 38 L54 20" />
+        <g class="pi-seal">
+          <circle class="paper" cx="50" cy="48" r="11" />
+          <circle class="pop pop-o" cx="50" cy="48" r="11" />
+          <path class="pi-check" d="M44.5 48 l4 4 l7 -8" />
+        </g>
+      </>
+    )}
+  </g>
+</svg>

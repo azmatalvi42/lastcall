@@ -33,18 +33,26 @@ export const site = {
   hours: 'Mon to Sat, 9am to 6pm',
   hoursIsPlaceholder: true,
 
-  /** Service area. Regions are also the form's select options (plus "Other"). */
+  /** Service area, named in the search description and footer. */
   regions: ['Toronto', 'Peel', 'York', 'Durham', 'Halton'] as const,
 
   /** Canonical site URL. PLACEHOLDER until a domain is chosen. */
   url: 'https://example.com',
   urlIsPlaceholder: true,
+
+  /**
+   * PLACEHOLDER: where buyers browse the current auctions and sales
+   * (your auction platform or listings page). Used by the "Shop" button on the Ontario map.
+   */
+  shopUrl: 'https://example.com/sales',
+  shopUrlIsPlaceholder: true,
 } as const;
 
 /**
  * The one commission sentence. Used word for word wherever commission comes up.
  */
 export const commissionSentence = 'Our commission is a percentage agreed in writing before any work starts.';
+
 
 // ===========================================================================
 // SERVICE PROMISES: UNCONFIRMED by Azmat, easy to cut.
@@ -87,8 +95,6 @@ export const timelines = [
   { value: '3-plus-months', label: 'In 3 months or more' },
   { value: 'exploring', label: 'Just exploring for now' },
 ] as const;
-
-export const regionOptions = [...site.regions, 'Other'] as const;
 
 /** Upload limits shared by the browser script and the server. */
 /** Shown when a submission is too large, on the server and in the browser. */

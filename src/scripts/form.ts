@@ -1,139 +1,169 @@
-// Tiny progressive enhancement for the walkthrough form.
-// Without JavaScript the form still posts normally and the server redirects
-// back to /#thanks or /#form-error.
-import { uploadLimits, tooLargeMessage } from '../config/site';
+// The lead form. Each input filled brings up the next scene of the selling
+// process beside it: listing, bidding, payment, pickup. Without JavaScript the
+// forms still post normally and the server redirects back to /#thanks or /#form-error.
+import { mountSaleScenes } from './sale-scenes';
+
+const SCENE_MOVE_MS = 700;
 
 const form = document.querySelector<HTMLFormElement>('form[data-walkthrough]');
+const formArea = document.querySelector<HTMLElement>('[data-capture-form]');
+const thanks = document.getElementById('thanks');
+const demoNote = document.getElementById('demo-note');
+const scenesRoot = document.querySelector<HTMLElement>('[data-sale-scenes]');
+const scenes = scenesRoot ? mountSaleScenes(scenesRoot) : null;
+
+document.querySelectorAll<HTMLInputElement>('input[name="started"]').forEach((input) => {
+  input.value = String(Date.now());
+});
+
+type Reply = { ok: boolean; demo?: boolean; errors?: Record<string, string> };
+
+async function post(target: HTMLFormElement, data: FormData): Promise<Reply> {
+  const res = await fetch(target.action, { method: 'POST', body: data, headers: { accept: 'application/json' } });
+  const body = await res.json().catch(() => ({}));
+  return { ok: res.ok && Boolean(body.ok), demo: body.demo, errors: body.errors };
+}
+
+/** Moves to the form the same way a link to it does, so the page's section changer stays in charge. */
+function goToCapture() {
+  const link = document.createElement('a');
+  link.href = '#walkthrough';
+  document.body.append(link);
+  link.click();
+  link.remove();
+}
 
 if (form) {
-  const started = form.querySelector<HTMLInputElement>('input[name="started"]')!;
-  started.value = String(Date.now());
-
-  const photosInput = form.querySelector<HTMLInputElement>('#f-photos')!;
-  const photoStatus = document.getElementById('photo-status')!;
+  const fieldNames = ['name', 'email', 'phone', 'location'];
+  const input = (name: string) => form.querySelector<HTMLInputElement>(`[name="${name}"]`)!;
   const submit = form.querySelector<HTMLButtonElement>('button[type="submit"]')!;
-  const thanks = document.getElementById('thanks')!;
-  const formError = document.getElementById('form-error')!;
-  const tooLargeState = document.getElementById('too-large');
-  // Room for the text fields and multipart boundaries on top of the photos.
-  const OVERHEAD_BYTES = 64 * 1024;
-  const fields = ['name', 'phone', 'region', 'timeline', 'photos'];
 
-  const mb = (n: number) => (n / 1024 / 1024).toFixed(1);
+  // The browser's bubbles are for when there is no JavaScript. Here errors sit under each line.
+  form.noValidate = true;
 
-  function setError(field: string, msg: string | null) {
+  const isFilled: Record<string, (el: HTMLInputElement) => boolean> = {
+    name: (el) => el.value.trim().length >= 2,
+    email: (el) => el.value.trim() !== '' && el.validity.valid,
+    phone: (el) => el.value.replace(/\D/g, '').length >= 10,
+    location: (el) => el.value.trim().length >= 2,
+  };
+
+  let reached = 0;
+  const syncScenes = () => {
+    const filled = fieldNames.filter((name) => {
+      const done = isFilled[name](input(name));
+      input(name).closest('.capture-row')?.classList.toggle('is-filled', done);
+      return done;
+    }).length;
+    if (filled !== reached) scenes?.goTo(filled);
+    reached = filled;
+  };
+
+  function setError(field: string, message: string | null) {
     const el = document.getElementById(`e-${field}`);
-    const wrap = el?.closest('.field');
-    const input = form!.querySelector<HTMLElement>(`[name="${field}"]`);
     if (!el) return;
-    el.textContent = msg ?? '';
-    el.hidden = !msg;
-    if (msg) {
-      wrap?.setAttribute('data-invalid', '');
-      input?.setAttribute('aria-invalid', 'true');
-      input?.setAttribute('aria-describedby', `e-${field}`);
+    el.textContent = message ?? '';
+    el.hidden = !message;
+    if (field === 'form') return;
+    const control = input(field);
+    if (message) {
+      control.setAttribute('aria-invalid', 'true');
+      control.setAttribute('aria-describedby', `e-${field}`);
     } else {
-      wrap?.removeAttribute('data-invalid');
-      input?.removeAttribute('aria-invalid');
-      input?.removeAttribute('aria-describedby');
+      control.removeAttribute('aria-invalid');
+      control.removeAttribute('aria-describedby');
     }
   }
 
-  async function resize(file: File): Promise<Blob> {
-    if (!file.type.startsWith('image/')) return file;
-    try {
-      const bmp = await createImageBitmap(file, { imageOrientation: 'from-image' });
-      const scale = Math.min(1, uploadLimits.maxEdgePx / Math.max(bmp.width, bmp.height));
-      const w = Math.round(bmp.width * scale);
-      const h = Math.round(bmp.height * scale);
-      const canvas = document.createElement('canvas');
-      canvas.width = w;
-      canvas.height = h;
-      canvas.getContext('2d')!.drawImage(bmp, 0, 0, w, h);
-      bmp.close();
-      const blob = await new Promise<Blob | null>((r) => canvas.toBlob(r, 'image/jpeg', 0.82));
-      return blob && blob.size < file.size ? blob : file;
-    } catch {
-      return file; // e.g. HEIC on browsers that cannot decode it
-    }
+  // Autofill does not always send `input`, so `change` is covered too.
+  ['input', 'change'].forEach((type) => form.addEventListener(type, (event) => {
+    const name = (event.target as HTMLInputElement).name;
+    if (fieldNames.includes(name)) setError(name, null);
+    setError('form', null);
+    syncScenes();
+  }));
+
+  function showThanks() {
+    if (formArea) formArea.hidden = true;
+    thanks?.setAttribute('data-show', '');
+    thanks?.focus({ preventScroll: true });
+    scenes?.finish();
   }
 
-  photosInput.addEventListener('change', () => {
-    const files = Array.from(photosInput.files ?? []);
-    setError('photos', null);
-    if (files.length > uploadLimits.maxFiles) {
-      setError('photos', `Please choose ${uploadLimits.maxFiles} photos or fewer.`);
-      photoStatus.textContent = '';
-      return;
-    }
-    photoStatus.textContent = files.length
-      ? `${files.length} photo${files.length > 1 ? 's' : ''} chosen. Large photos are made smaller before sending.`
-      : '';
-  });
-
-  form.addEventListener('submit', async (ev) => {
-    ev.preventDefault();
-    fields.forEach((f) => setError(f, null));
+  form.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    fieldNames.forEach((name) => setError(name, null));
     setError('form', null);
 
-    const data = new FormData(form);
-    const files = Array.from(photosInput.files ?? []).filter((f) => f.size > 0);
-    if (files.length > uploadLimits.maxFiles) {
-      setError('photos', `Please choose ${uploadLimits.maxFiles} photos or fewer.`);
-      photosInput.focus();
+    const missing: Record<string, string> = {};
+    if (input('name').value.trim().length < 2) missing.name = 'Please tell us your name.';
+    if (!isFilled.email(input('email'))) missing.email = input('email').value.trim() ? 'Please enter a valid email address.' : 'Please enter your email.';
+
+    const report = (errors: Record<string, string>) => {
+      let first: string | null = null;
+      for (const [key, message] of Object.entries(errors)) {
+        if (fieldNames.includes(key)) {
+          setError(key, message);
+          first ??= key;
+        } else setError('form', message);
+      }
+      if (first) input(first).focus();
+    };
+
+    if (Object.keys(missing).length) {
+      report(missing);
       return;
     }
 
     submit.disabled = true;
     const label = submit.textContent;
-    submit.textContent = files.length ? 'Preparing photos...' : 'Sending...';
-
+    submit.textContent = 'Sending...';
     try {
-      data.delete('photos');
-      let total = 0;
-      for (const [i, f] of files.entries()) {
-        const blob = await resize(f);
-        total += blob.size;
-        const name = (f.name.replace(/\.[^.]+$/, '') || `photo-${i + 1}`) + (blob.type === 'image/jpeg' ? '.jpg' : '');
-        data.append('photos', blob, blob === f ? f.name : name);
-      }
-      if (total > uploadLimits.maxTotalBytes || total + OVERHEAD_BYTES > uploadLimits.maxRequestBytes) {
-        setError('photos', `${tooLargeMessage} (These add up to ${mb(total)} MB; the limit is ${mb(uploadLimits.maxRequestBytes)} MB.)`);
-        photosInput.focus();
+      const reply = await post(form, new FormData(form));
+      if (reply.ok) {
+        if (demoNote) demoNote.hidden = !reply.demo;
+        showThanks();
         return;
       }
-
-      submit.textContent = 'Sending...';
-      const res = await fetch(form.action, { method: 'POST', body: data, headers: { accept: 'application/json' } });
-      const body = await res.json().catch(() => ({}));
-      if (res.status === 413) {
-        // Our function's JSON 413, or the platform's own limit page: same message either way.
-        setError('photos', body.errors?.photos ?? tooLargeMessage);
-        photosInput.focus();
-        return;
-      }
-      if (res.ok && body.ok) {
-        document.getElementById('demo-note')!.hidden = !body.demo;
-        formError.removeAttribute('data-show');
-        tooLargeState?.removeAttribute('data-show');
-        thanks.setAttribute('data-show', '');
-        thanks.focus();
-        return;
-      }
-      const errors: Record<string, string> = body.errors ?? { form: 'Sorry, something went wrong. Please try again or call us.' };
-      let first: string | null = null;
-      for (const [k, v] of Object.entries(errors)) {
-        if (fields.includes(k)) {
-          setError(k, v);
-          first ??= k;
-        } else setError('form', v);
-      }
-      if (first) form.querySelector<HTMLElement>(`[name="${first}"]`)?.focus();
+      report(reply.errors ?? { form: 'Sorry, something went wrong. Please try again or call us.' });
     } catch {
       setError('form', 'We could not reach the server. Please check your connection, or call us.');
     } finally {
       submit.disabled = false;
       submit.textContent = label;
     }
+  });
+
+  // The hero's email box saves the lead straight away, then brings them here with their email filled in.
+  document.querySelectorAll<HTMLFormElement>('form[data-capture]').forEach((hero) => {
+    const button = hero.querySelector<HTMLButtonElement>('button[type="submit"]')!;
+    const email = hero.querySelector<HTMLInputElement>('input[type="email"]')!;
+
+    hero.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const label = button.textContent;
+      button.disabled = true;
+      button.textContent = 'Sending...';
+      let failure: string | null = null;
+      try {
+        const reply = await post(hero, new FormData(hero));
+        if (reply.ok) {
+          if (demoNote) demoNote.hidden = !reply.demo;
+        } else failure = reply.errors?.email ?? reply.errors?.form ?? 'Sorry, something went wrong. Please try again or call us.';
+      } catch {
+        failure = 'We could not reach the server. Please check your connection, or call us.';
+      }
+      button.disabled = false;
+      button.textContent = label;
+
+      input('email').value = email.value.trim();
+      hero.reset();
+      goToCapture();
+      window.setTimeout(() => {
+        syncScenes();
+        if (failure) setError('form', failure);
+        input('name').focus({ preventScroll: true });
+      }, SCENE_MOVE_MS);
+    });
   });
 }

@@ -7,14 +7,14 @@ import {
   buildEmail,
   MIN_FILL_MS,
 } from '../src/lib/walkthrough';
-import { regionOptions, uploadLimits, tooLargeMessage } from '../src/config/site';
+import { uploadLimits, tooLargeMessage } from '../src/config/site';
 
 const NOW = 1_800_000_000_000;
 const liveEnv = { RESEND_API_KEY: 're_test', LEAD_TO_EMAIL: 'owner@example.com', LEAD_FROM_EMAIL: 'site@example.com' };
 
 function form(overrides: Record<string, string> = {}, files: File[] = []) {
   const fd = new FormData();
-  const base = { name: 'Jane Doe', phone: '(905) 555-0123', region: 'Peel', timeline: 'asap', website: '', started: String(NOW - 20_000) };
+  const base = { email: 'jane@example.com', name: 'Jane Doe', phone: '(905) 555-0123', location: 'Oakville', timeline: 'asap', website: '', started: String(NOW - 20_000) };
   for (const [k, v] of Object.entries({ ...base, ...overrides })) fd.set(k, v);
   for (const f of files) fd.append('photos', f);
   return fd;
@@ -23,25 +23,45 @@ const img = (name: string, size: number, type = 'image/jpeg') => new File([new U
 const deps = (send = vi.fn().mockResolvedValue(undefined)) => ({ now: () => NOW, send, log: () => {} });
 
 describe('schema', () => {
-  it('accepts every region option', () => {
-    expect(regionOptions).toEqual(['Toronto', 'Peel', 'York', 'Durham', 'Halton', 'Other']);
-    for (const region of regionOptions) {
-      expect(walkthroughSchema.safeParse({ name: 'Al', phone: '4165550100', region, timeline: 'exploring' }).success).toBe(true);
+  const lead = (over: Record<string, string> = {}) => ({ email: 'al@example.com', name: '', phone: '', location: '', timeline: '', ...over });
+
+  it('needs nothing but a valid email', () => {
+    expect(walkthroughSchema.safeParse(lead()).success).toBe(true);
+    for (const email of ['', 'nope', 'a@', '@b.ca']) {
+      expect(walkthroughSchema.safeParse(lead({ email })).success).toBe(false);
     }
   });
-  it('rejects an unknown region (old city values too)', () => {
-    for (const region of ['Narnia', 'Ottawa', '']) {
-      expect(walkthroughSchema.safeParse({ name: 'Al', phone: '4165550100', region, timeline: 'asap' }).success).toBe(false);
+  it('accepts any location as free text', () => {
+    for (const location of ['Ottawa', 'Thunder Bay', '12 King St, Hamilton']) {
+      expect(walkthroughSchema.parse(lead({ location })).location).toBe(location);
     }
   });
   it('normalises phone numbers and allows a leading 1', () => {
-    const r = walkthroughSchema.parse({ name: 'Al', phone: '+1 (416) 555-0100', region: 'Toronto', timeline: 'asap' });
-    expect(r.phone).toBe('4165550100');
+    expect(walkthroughSchema.parse(lead({ phone: '+1 (416) 555-0100' })).phone).toBe('4165550100');
   });
-  it('rejects short phones, short names and unknown timelines', () => {
-    expect(walkthroughSchema.safeParse({ name: 'Al', phone: '555-0100', region: 'York', timeline: 'asap' }).success).toBe(false);
-    expect(walkthroughSchema.safeParse({ name: 'A', phone: '4165550100', region: 'York', timeline: 'asap' }).success).toBe(false);
-    expect(walkthroughSchema.safeParse({ name: 'Al', phone: '4165550100', region: 'York', timeline: 'tomorrow' }).success).toBe(false);
+  it('rejects a short phone and an unknown timeline, when they are given', () => {
+    expect(walkthroughSchema.safeParse(lead({ phone: '555-0100' })).success).toBe(false);
+    expect(walkthroughSchema.safeParse(lead({ timeline: 'tomorrow' })).success).toBe(false);
+  });
+  it('keeps line breaks out of names and locations, which go in the subject line', () => {
+    const r = walkthroughSchema.parse(lead({ name: 'Al\nBcc: x', location: ' Oak\r\nville ' }));
+    expect(r.name).toBe('Al Bcc: x');
+    expect(r.location).toBe('Oak ville');
+  });
+});
+
+describe('first step', () => {
+  it('saves a lead from the email alone, with or without the other fields present', async () => {
+    const emailOnly = new FormData();
+    emailOnly.set('email', 'jane@example.com');
+    emailOnly.set('website', '');
+    emailOnly.set('started', String(NOW - 20_000));
+    const send = vi.fn().mockResolvedValue(undefined);
+    const out = await processSubmission(emailOnly, liveEnv, deps(send));
+    expect(out).toMatchObject({ status: 'ok', sent: true });
+    expect(send.mock.calls[0][0].subject).toBe('New lead: jane@example.com');
+    expect(send.mock.calls[0][0].text).toContain('Email: jane@example.com');
+    expect(send.mock.calls[0][0].text).not.toContain('Name:');
   });
 });
 
@@ -108,9 +128,10 @@ describe('photos', () => {
 
 describe('email', () => {
   it('builds a readable email with a formatted phone', () => {
-    const msg = buildEmail({ name: 'Jane', phone: '9055550123', region: 'Halton', timeline: '1-3-months' }, [], liveEnv);
+    const msg = buildEmail({ email: 'jane@example.com', name: 'Jane', phone: '9055550123', location: 'Hamilton', timeline: '1-3-months' }, [], liveEnv);
     expect(msg.to).toBe('owner@example.com');
-    expect(msg.subject).toContain('Halton');
+    expect(msg.subject).toBe('Lead details: Jane, Hamilton');
+    expect(msg.text).toContain('jane@example.com');
     expect(msg.text).toContain('(905) 555-0123');
     expect(msg.text).toContain('In 1 to 3 months');
   });
@@ -131,9 +152,9 @@ describe('HTTP handler', () => {
     expect(await res.json()).toEqual({ ok: true, demo: true });
   });
   it('returns 422 JSON with field errors', async () => {
-    const res = await handleWalkthrough(req(form({ region: 'Mars' })), {}, deps());
+    const res = await handleWalkthrough(req(form({ email: 'nope' })), {}, deps());
     expect(res.status).toBe(422);
-    expect((await res.json()).errors.region).toBeTruthy();
+    expect((await res.json()).errors.email).toBeTruthy();
   });
   it('redirects plain HTML posts to the thank-you anchor', async () => {
     const res = await handleWalkthrough(req(form(), 'text/html'), {}, deps());
@@ -141,7 +162,7 @@ describe('HTTP handler', () => {
     expect(res.headers.get('location')).toBe('/#thanks');
   });
   it('redirects invalid plain HTML posts to the error anchor', async () => {
-    const res = await handleWalkthrough(req(form({ name: '' }), 'text/html'), {}, deps());
+    const res = await handleWalkthrough(req(form({ email: '' }), 'text/html'), {}, deps());
     expect(res.headers.get('location')).toBe('/#form-error');
   });
   it('rejects GET', async () => {

@@ -22,26 +22,20 @@ for (const [name, width, height, dpr] of sizes) {
   await page.screenshot({ path: `${out}/${name}-${width}-fold.png` });
   await page.close();
 }
-// Thank-you state in demo mode: fill and submit the real form.
+// Validation errors, then the thank-you state in demo mode.
 const page = await browser.newPage({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2 });
 await page.goto(base + '/#walkthrough', { waitUntil: 'networkidle' });
 await page.fill('#f-name', 'Sample Person');
+await page.fill('#f-phone', '555');
+await page.waitForTimeout(1800); // passes the time-to-submit check
+await page.click('form[data-walkthrough] button[type=submit]');
+await page.waitForSelector('#e-email:not([hidden])');
+await page.screenshot({ path: `${out}/form-errors-mobile.png` });
+await page.fill('#f-email', 'sample@example.com');
 await page.fill('#f-phone', '(905) 555-0199');
-await page.selectOption('#f-region', 'Durham');
-await page.selectOption('#f-timeline', '1-3-months');
-await page.waitForTimeout(3200); // passes the time-to-submit check
 await page.click('form[data-walkthrough] button[type=submit]');
 await page.waitForSelector('#thanks[data-show]');
 await page.waitForTimeout(300);
 await page.screenshot({ path: `${out}/thank-you-demo-mobile.png` });
-// validation errors state
-await page.goto(base + '/', { waitUntil: 'networkidle' });
-await page.fill('#f-phone', '555');
-await page.waitForTimeout(3200);
-await page.click('form[data-walkthrough] button[type=submit]');
-await page.waitForSelector('#e-name:not([hidden])');
-await page.locator('#f-name').scrollIntoViewIfNeeded();
-await page.evaluate(() => window.scrollBy(0, -120));
-await page.screenshot({ path: `${out}/form-errors-mobile.png` });
 await browser.close();
 console.log('done');

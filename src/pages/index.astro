@@ -1,29 +1,28 @@
 ---
 import { Picture } from 'astro:assets';
 import '../styles/global.css';
-import { site, telHref, timelines, regionOptions, uploadLimits, tooLargeMessage, servicePromises, commissionSentence } from '../config/site';
-import livingRoom from '../assets/img/living-room.jpg';
-import chinaCabinet from '../assets/img/china-cabinet.jpg';
-import hallwayBoxes from '../assets/img/hallway-boxes.jpg';
-import saleTable from '../assets/img/sale-table.jpg';
-import bungalow from '../assets/img/brick-bungalow.jpg';
+import { site, telHref, tooLargeMessage, servicePromises, commissionSentence } from '../config/site';
+import estateAuction from '../assets/img/estate-auction.jpg';
+import onlineSale from '../assets/img/online-sale.jpg';
+import estateSale from '../assets/img/estate-sale.jpg';
+import garageSale from '../assets/img/garage-sale.jpg';
+import buyoutHouse from '../assets/img/buyout-house.jpg';
+import antiquesTable from '../assets/img/antiques-table.jpg';
+import AuctionSketch from '../components/sketches/AuctionSketch.astro';
+import EstateSaleSketch from '../components/sketches/EstateSaleSketch.astro';
+import BuyoutSketch from '../components/sketches/BuyoutSketch.astro';
+import OnlineSaleSketch from '../components/sketches/OnlineSaleSketch.astro';
+import GarageSaleSketch from '../components/sketches/GarageSaleSketch.astro';
+import PanelIcon from '../components/sketches/PanelIcon.astro';
 
 const P = servicePromises;
-const anyPlaceholder =
-  site.businessNameIsPlaceholder || site.phoneIsPlaceholder || site.emailIsPlaceholder || site.hoursIsPlaceholder || site.urlIsPlaceholder;
 const regionList = site.regions.join(', ').replace(/, ([^,]*)$/, ' and $1');
-const title = `${site.businessName} | Full house buyouts and estate sales across the GTA`;
-const description = `Clearing out a home in ${regionList}? Get one written offer for the whole house, and we empty it quickly. We also run full estate sales. Free, no-obligation walkthrough.`;
+const title = `${site.businessName} | Estate sales, auctions and full house buyouts across the GTA`;
+const description = `Need to sell a house full of things in ${regionList}? We run estate sales, estate auctions, garage sales and online sales, or we buy the whole house. Free walkthrough.`;
 const year = new Date().getFullYear();
 const cta = 'Get my free offer';
 
-/** Leftover promises shown in the dark band, in order. Missing promises are skipped. */
-const leftovers = [
-  P.keepsakesFirst,
-  P.donateUsable,
-  { title: 'The rest is cleared properly.', text: 'We recycle what we can and dispose of the rest the right way.' },
-  P.broomClean,
-].filter((x): x is { title: string; text: string } => Boolean(x));
+const agentLine = 'Our AI agents list, upload, describe and optimize your gems, then find the buyers and make the ads.';
 
 const faqs = [
   {
@@ -63,6 +62,32 @@ const faqs = [
     a: 'Yes. The walkthrough and the written offer cost nothing, and there is no obligation. If you decide not to go ahead, that is completely fine.',
   },
 ];
+
+/** Nine questions and the free space fill a five by two sheet. The free space sits under the A. Numbers are decoration. */
+const bingoNumbers = ['4', '22', '37', '51', '68', '11', '19', '58', '73'];
+const bingoSquares: ({ q: string; a: string; number: string } | null)[] = faqs.map((f, i) => ({ ...f, number: bingoNumbers[i] }));
+bingoSquares.splice(7, 0, null);
+
+/** Logos come from each company's own website. Height evens out how large they look, since their shapes differ. */
+const partners: { name: string; logo?: string; width?: number; height?: number }[] = [
+  { name: 'Dymon', logo: '/logos/dymon.png', width: 435, height: 169 },
+  { name: 'Apple Self Storage', logo: '/logos/apple-self-storage.png', width: 300, height: 65 },
+  { name: 'StorageVault', logo: '/logos/storagevault.png', width: 900, height: 156 },
+  { name: 'Sentinel', logo: '/logos/sentinel.svg', width: 200, height: 60 },
+  { name: 'Public Storage', logo: '/logos/public-storage.png', width: 186, height: 98 },
+  { name: 'Access Storage', logo: '/logos/access-storage.svg', width: 550, height: 250 },
+  { name: 'Mink Storage' },
+  { name: 'U-Haul', logo: '/logos/u-haul.svg', width: 100, height: 16 },
+];
+const logoHeights: Record<string, string> = {
+  Dymon: '2.25rem',
+  'Apple Self Storage': '1.75rem',
+  StorageVault: '1.5rem',
+  Sentinel: '2.25rem',
+  'Public Storage': '2.5rem',
+  'Access Storage': '2.5rem',
+  'U-Haul': '1.25rem',
+};
 ---
 <!doctype html>
 <html lang="en-CA">
@@ -71,8 +96,9 @@ const faqs = [
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     <meta name="description" content={description} />
-    <meta name="theme-color" content="#1f4034" />
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <meta name="theme-color" content="#120c08" />
+    <link rel="icon" href="/favicon.png" type="image/png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
@@ -80,184 +106,445 @@ const faqs = [
   <body class="pb-24 md:pb-0">
     <a href="#main" class="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 btn btn-primary">Skip to main content</a>
 
-    {anyPlaceholder && (
-      <div class="bg-sand text-ink text-center text-[0.85rem] py-2 px-4 border-b border-line">
-        Preview: the phone number, email, hours and web address are placeholders.
-      </div>
-    )}
-
-    <header class="sticky top-0 z-40 bg-cream/95 backdrop-blur border-b border-line">
-      <div class="mx-auto max-w-6xl px-5 flex items-center justify-between gap-4 min-h-[4.5rem]">
-        <a href="/" class="flex items-center gap-3 no-underline text-pine-dark min-h-12">
-          <svg aria-hidden="true" width="34" height="34" viewBox="0 0 34 34"><rect width="34" height="34" rx="8" fill="#1f4034"/><path d="M8 17.5 17 10l9 7.5V25a1 1 0 0 1-1 1h-5v-5h-6v5H9a1 1 0 0 1-1-1z" fill="#f6f0e4"/><circle cx="24.5" cy="11" r="2.2" fill="#e9c9a8"/></svg>
-          <span class="font-serif text-[1.3rem] font-semibold leading-none">{site.businessName}</span>
-        </a>
-        <nav aria-label="Main" class="hidden lg:flex items-center gap-7 text-[0.95rem]">
-          <a class="text-ink hover:text-pine underline-offset-4 hover:underline py-3" href="#options">Services</a>
-          <a class="text-ink hover:text-pine underline-offset-4 hover:underline py-3" href="#how">How it works</a>
-          <a class="text-ink hover:text-pine underline-offset-4 hover:underline py-3" href="#faq">Questions</a>
-          <a class="text-ink hover:text-pine underline-offset-4 hover:underline py-3" href="#area">Area</a>
-        </nav>
-        <div class="flex items-center gap-3">
-          <a href={telHref} class="hidden md:flex flex-col items-end leading-tight no-underline min-h-12 justify-center">
-            <span class="text-[0.8rem] text-muted">Call us, {site.hours}</span>
-            <span class="font-bold text-pine-dark text-[1.15rem]">{site.phoneDisplay}</span>
-          </a>
-          <a href="#walkthrough" class="btn btn-primary hidden md:inline-flex">{cta}</a>
-          <a href={telHref} class="btn btn-secondary md:hidden !min-h-12 !px-4" aria-label={`Call ${site.phoneDisplay}`}>
-            <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1z"/></svg>
-            Call
-          </a>
-        </div>
-      </div>
-    </header>
-
     <main id="main">
       <!-- HERO -->
-      <section class="mx-auto max-w-6xl px-5 pt-10 pb-14 md:pt-14 md:pb-20 grid gap-10 lg:grid-cols-[1.05fr_1fr] lg:items-center">
-        <div>
-          <p class="eyebrow mb-4">Full house buyouts across the GTA</p>
-          <h1 class="text-[2.3rem] sm:text-[2.8rem] lg:text-[3.3rem] font-semibold">One written offer for everything in the house.</h1>
-          <p class="mt-6 text-[1.1rem] text-muted max-w-xl">
-            Downsizing, settling an estate or helping a parent move? We walk through the home with you and give you one written offer for the contents. Once you accept, we empty the house quickly. No sale days, and no strangers in the home.
-          </p>
-          <div class="mt-8 flex flex-col sm:flex-row gap-3">
-            <a href="#walkthrough" class="btn btn-primary text-[1.05rem]">{cta}</a>
-            <a href={telHref} class="btn btn-secondary text-[1.05rem]">
-              <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1z"/></svg>
-              Call {site.phoneDisplay}
-            </a>
-          </div>
-          <p class="mt-5 text-[0.95rem] text-muted">Free and no obligation. Prefer a full estate sale instead? <a class="text-pine-dark font-bold underline underline-offset-4" href="#options">We do that too.</a></p>
+      <section class="hero relative isolate flex items-center justify-center overflow-hidden h-[100svh]">
+        <div class="hero-montage absolute inset-0 z-0" aria-hidden="true">
+          <img class="hero-still absolute inset-0 h-full w-full object-cover" src="/hero-doorway-poster.jpg" alt="" width="1280" height="720" fetchpriority="high" decoding="async" />
+          <video class="hero-video is-under absolute inset-0 h-full w-full object-cover" poster="/hero-doorway-poster.jpg" src="/hero-doorway.mp4" autoplay muted playsinline preload="auto" disablepictureinpicture tabindex="-1"></video>
+          <video class="hero-video absolute inset-0 h-full w-full object-cover" muted playsinline preload="none" disablepictureinpicture tabindex="-1"></video>
         </div>
-        <figure class="relative">
-          <Picture src={livingRoom} formats={['avif', 'webp']} widths={[480, 768, 1024]} sizes="(min-width: 1024px) 46vw, 100vw" alt="A sunlit living room with a floral armchair, a teak sideboard and framed paintings, each with a small paper price tag" loading="eager" fetchpriority="high" class="w-full h-auto rounded-2xl shadow-[0_20px_50px_-25px_rgba(31,42,37,.55)] aspect-[16/10] md:aspect-[16/8] lg:aspect-[16/10] object-cover" />
-        </figure>
-      </section>
-
-      <!-- OPTIONS -->
-      <section id="options" class="bg-paper border-y border-line">
-        <div class="mx-auto max-w-6xl px-5 py-16 md:py-20">
-          <p class="eyebrow mb-3">Two ways we can help</p>
-          <h2 class="text-[2rem] md:text-[2.5rem] font-semibold max-w-2xl">One offer for the whole house, or a full estate sale.</h2>
-          <p class="mt-4 text-muted max-w-2xl">A buyout is the simplest way to clear a home. If a sale would suit yours better, we will tell you honestly at the walkthrough.</p>
-
-          <div class="mt-10 grid gap-6 md:grid-cols-2">
-            <article class="bg-cream rounded-2xl border-2 border-pine overflow-hidden flex flex-col">
-              <Picture src={bungalow} formats={['avif', 'webp']} widths={[360, 540, 720, 900]} sizes="(min-width: 768px) 560px, calc(100vw - 2.5rem)" alt="A red brick bungalow on a quiet street in autumn" loading="lazy" class="w-full h-56 md:h-64 object-cover" />
-              <div class="p-6 md:p-8 flex flex-col grow">
-                <p class="eyebrow mb-2">Our main service</p>
-                <h3 class="text-[1.6rem] font-semibold">We buy the whole house</h3>
-                <p class="mt-2 text-muted">One written offer for the contents. Once you accept, we empty the house quickly.</p>
-                <ul class="mt-5 space-y-2">
-                  <li class="flex gap-3"><span aria-hidden="true" class="text-clay font-bold">&#10003;</span>One written offer after a free walkthrough</li>
-                  <li class="flex gap-3"><span aria-hidden="true" class="text-clay font-bold">&#10003;</span>No sale days and no strangers in the home</li>
-                  <li class="flex gap-3"><span aria-hidden="true" class="text-clay font-bold">&#10003;</span>We pack, remove and clear everything</li>
-                  <li class="flex gap-3"><span aria-hidden="true" class="text-clay font-bold">&#10003;</span>Scheduled around your closing or move date</li>
-                </ul>
-                <dl class="mt-6 pt-5 border-t border-line space-y-3 text-[0.95rem] mt-auto">
-                  <div><dt class="font-bold inline">How you are paid: </dt><dd class="inline text-muted">one agreed amount for the contents, set out in your written offer.</dd></div>
-                  <div><dt class="font-bold inline">A good fit when: </dt><dd class="inline text-muted">the house is sold or listed, time is short, or you would rather not host a sale.</dd></div>
-                </dl>
-                <a href="#walkthrough" class="btn btn-primary mt-6 !whitespace-normal text-center">{cta}</a>
-              </div>
-            </article>
-
-            <article class="bg-cream rounded-2xl border border-line overflow-hidden flex flex-col">
-              <Picture src={chinaCabinet} formats={['avif', 'webp']} widths={[360, 540, 720, 900]} sizes="(min-width: 768px) 560px, calc(100vw - 2.5rem)" alt="A wooden china cabinet of floral teacups and plates, each piece with a handwritten price" loading="lazy" class="w-full h-56 md:h-64 object-cover" />
-              <div class="p-6 md:p-8 flex flex-col grow">
-                <p class="eyebrow mb-2">Also available</p>
-                <h3 class="text-[1.6rem] font-semibold">We run the sale for you</h3>
-                <p class="mt-2 text-muted">We price, set up and run a 2 to 3 day estate sale in the home, then clear out what is left.</p>
-                <ul class="mt-5 space-y-2">
-                  <li class="flex gap-3"><span aria-hidden="true" class="text-clay font-bold">&#10003;</span>Sorting, research and pricing</li>
-                  <li class="flex gap-3"><span aria-hidden="true" class="text-clay font-bold">&#10003;</span>Staging the rooms and advertising the sale</li>
-                  <li class="flex gap-3"><span aria-hidden="true" class="text-clay font-bold">&#10003;</span>Running the sale days and handling payments</li>
-                  <li class="flex gap-3"><span aria-hidden="true" class="text-clay font-bold">&#10003;</span>Clearing what is left once the sale ends</li>
-                </ul>
-                <dl class="mt-6 pt-5 border-t border-line space-y-3 text-[0.95rem] mt-auto">
-                  <div><dt class="font-bold inline">How you are paid: </dt><dd class="inline text-muted">you keep the sale proceeds, less our commission. {commissionSentence}</dd></div>
-                  <div><dt class="font-bold inline">A good fit when: </dt><dd class="inline text-muted">there is some time, and the home has furniture, collectibles or lots of household goods.</dd></div>
-                </dl>
-                <a href="#walkthrough" class="btn btn-secondary mt-6 !whitespace-normal text-center">Ask about an estate sale</a>
-              </div>
-            </article>
-          </div>
+        <img class="hero-logo" src="/logos/last-call-logo-light.png" alt="Last Call" width="900" height="227" fetchpriority="high" decoding="async" />
+        <div class="hero-copy relative z-10 mx-auto w-full max-w-5xl px-5 py-28 text-center">
+          <h1>Loved before.<br><em>Loved again.</em></h1>
+          <p class="hero-lede">Let Lastcall handle the sale. You get what it's worth.</p>
+          <form class="capture-bar hero-email" action="/api/walkthrough" method="post" enctype="multipart/form-data" data-capture>
+            <label class="sr-only" for="hero-email">Your email</label>
+            <input id="hero-email" name="email" type="email" required maxlength="200" autocomplete="email" inputmode="email" enterkeyhint="send" placeholder="Your email" />
+            <button type="submit">{cta}</button>
+            <div class="hp" aria-hidden="true">
+              <label for="hero-website">Leave this empty</label>
+              <input id="hero-website" name="website" type="text" tabindex="-1" autocomplete="off" />
+            </div>
+            <input type="hidden" name="started" value="" />
+          </form>
         </div>
       </section>
+      <script>
+        // Each clip keeps its subject in view when a narrow screen crops the sides.
+        const clips = ['/hero-doorway.mp4', '/hero-family.mp4', '/hero-kitchen.mp4', '/hero-bedroom.mp4'];
+        const focus = ['68% center', '24% center', '56% center', '50% center'];
+        const fadeMs = 900;
+        const players: HTMLVideoElement[] = [];
+        document.querySelectorAll('.hero-montage video').forEach((node) => {
+          if (node instanceof HTMLVideoElement) players.push(node);
+        });
 
-      <!-- HOW IT WORKS -->
-      <section id="how" class="mx-auto max-w-6xl px-5 py-16 md:py-20">
-        <p class="eyebrow mb-3">How it works</p>
-        <h2 class="text-[2rem] md:text-[2.5rem] font-semibold max-w-2xl">Three simple steps, and you are never left guessing.</h2>
-        <ol class="mt-10 grid gap-6 md:grid-cols-3">
-          <li class="rounded-2xl bg-paper border border-line p-6 md:p-7">
-            <span class="font-serif text-[2.4rem] leading-none text-clay" aria-hidden="true">1</span>
-            <h3 class="mt-3 text-[1.35rem] font-semibold">A free walkthrough</h3>
-            <p class="mt-2 text-muted">We visit, look through the rooms and listen to what you need. Bring family or your realtor if you like.</p>
-          </li>
-          <li class="rounded-2xl bg-paper border border-line p-6 md:p-7">
-            <span class="font-serif text-[2.4rem] leading-none text-clay" aria-hidden="true">2</span>
-            <h3 class="mt-3 text-[1.35rem] font-semibold">Your offer in writing</h3>
-            <p class="mt-2 text-muted">You get one written offer for the contents, with dates and the plan for leftovers. Nothing happens until you agree. If a sale fits better, we put that plan in writing instead.</p>
-          </li>
-          <li class="rounded-2xl bg-paper border border-line p-6 md:p-7">
-            <span class="font-serif text-[2.4rem] leading-none text-clay" aria-hidden="true">3</span>
-            <h3 class="mt-3 text-[1.35rem] font-semibold">We take it from there</h3>
-            <p class="mt-2 text-muted">We pack up and clear everything, or run the sale and clear what is left. You get the house back empty{P.broomClean ? ' and broom-clean' : ''}.</p>
-          </li>
-        </ol>
+        const whenReady = (video: HTMLVideoElement) => {
+          if (video.readyState >= 2) return Promise.resolve();
+          return new Promise<void>((resolve, reject) => {
+            const ok = () => { cleanup(); resolve(); };
+            const bad = () => { cleanup(); reject(new Error('clip')); };
+            const cleanup = () => {
+              video.removeEventListener('loadeddata', ok);
+              video.removeEventListener('error', bad);
+            };
+            video.addEventListener('loadeddata', ok);
+            video.addEventListener('error', bad);
+            if (video.readyState >= 2) ok();
+          });
+        };
+
+        const assign = async (video: HTMLVideoElement, index: number) => {
+          const src = clips[index % clips.length];
+          video.style.objectPosition = focus[index % clips.length];
+          video.muted = true;
+          video.playsInline = true;
+          if (!video.currentSrc.endsWith(src)) {
+            video.src = src;
+            video.load();
+          }
+          await whenReady(video);
+          video.currentTime = 0;
+        };
+
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+          players.forEach((video) => {
+            video.removeAttribute('autoplay');
+            video.pause();
+          });
+        } else if (players.length === 2) {
+          let clip = 0;
+          let active = 0;
+          let switching = false;
+
+          const advance = async () => {
+            if (switching) return;
+            switching = true;
+            const previous = players[active];
+            const next = players[1 - active];
+            for (let attempt = 0; attempt < clips.length; attempt += 1) {
+              clip = (clip + 1) % clips.length;
+              try {
+                await assign(next, clip);
+                await next.play();
+                next.classList.add('is-incoming');
+                next.offsetWidth;
+                next.classList.add('is-over');
+                await new Promise((resolve) => window.setTimeout(resolve, fadeMs));
+                previous.pause();
+                previous.classList.remove('is-under');
+                next.classList.remove('is-incoming', 'is-over');
+                next.classList.add('is-under');
+                active = 1 - active;
+                assign(players[1 - active], clip + 1).catch(() => {});
+                switching = false;
+                return;
+              } catch {
+                /* This clip failed. Try the next one. */
+              }
+            }
+            switching = false;
+          };
+
+          players.forEach((video) => {
+            video.addEventListener('timeupdate', () => {
+              if (video !== players[active] || switching) return;
+              if (!(video.duration > 1) || video.currentTime < 0.4) return;
+              const remaining = video.duration - video.currentTime;
+              if (remaining <= fadeMs / 1000 + 0.05) advance();
+            });
+            video.addEventListener('ended', () => {
+              if (video === players[active]) advance();
+            });
+          });
+
+          const startFirst = () => {
+            if (players[0].paused) players[0].play().catch(() => {});
+          };
+          players[0].classList.add('is-under');
+          startFirst();
+          players[0].addEventListener('canplay', startFirst, { once: true });
+          assign(players[1], 1).catch(() => {});
+        }
+
+      </script>
+
+      <!-- SALE FINDER -->
+      <section id="find-a-sale" class="panel-scene" aria-label="The different services we offer">
+        <p class="panel-title">The different services we offer</p>
+        <div class="panel-acc" data-panel-acc>
+          <svg class="sk-defs" aria-hidden="true" focusable="false">
+            <defs>
+              <filter id="sk-boil-a" x="-5%" y="-5%" width="110%" height="110%"><feTurbulence type="fractalNoise" baseFrequency="0.03" numOctaves="2" seed="2" result="n" /><feDisplacementMap in="SourceGraphic" in2="n" scale="3.5" xChannelSelector="R" yChannelSelector="G" /></filter>
+              <filter id="sk-boil-b" x="-5%" y="-5%" width="110%" height="110%"><feTurbulence type="fractalNoise" baseFrequency="0.03" numOctaves="2" seed="7" result="n" /><feDisplacementMap in="SourceGraphic" in2="n" scale="3.5" xChannelSelector="R" yChannelSelector="G" /></filter>
+              <filter id="sk-boil-c" x="-5%" y="-5%" width="110%" height="110%"><feTurbulence type="fractalNoise" baseFrequency="0.03" numOctaves="2" seed="13" result="n" /><feDisplacementMap in="SourceGraphic" in2="n" scale="3.5" xChannelSelector="R" yChannelSelector="G" /></filter>
+              <pattern id="sk-hatch" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="7" stroke="#16120e" stroke-width="1.6" /></pattern>
+            </defs>
+          </svg>
+          <article class="panel panel--drawn is-open">
+            <div class="panel-sketch"><AuctionSketch /></div>
+            <button type="button" class="panel-hit" aria-expanded="true">
+              <span class="panel-index">01</span>
+              <PanelIcon name="auction" />
+              <span class="panel-vert">Estate Auctions</span>
+              <span class="panel-plus" aria-hidden="true"></span>
+            </button>
+            <div class="panel-open-copy">
+              <img class="panel-brand" src="/logos/last-call-logo.png" alt="Last Call" width="900" height="227" loading="lazy" decoding="async" />
+              <span class="panel-rule" aria-hidden="true"></span>
+              <h2>Estate<br>Auctions</h2>
+              <p class="panel-kicker">Rare finds. Real value.</p>
+              <p class="panel-blurb">Photographed lots, bidding online, and pickup arranged for you.</p>
+              <a class="panel-cta" href="#walkthrough">Ask about an estate auction</a>
+            </div>
+          </article>
+          <article class="panel panel--drawn">
+            <div class="panel-sketch"><OnlineSaleSketch /></div>
+            <button type="button" class="panel-hit" aria-expanded="false">
+              <span class="panel-index">02</span>
+              <PanelIcon name="online" />
+              <span class="panel-vert">Online Sales</span>
+              <span class="panel-plus" aria-hidden="true"></span>
+            </button>
+            <div class="panel-open-copy">
+              <img class="panel-brand" src="/logos/last-call-logo.png" alt="Last Call" width="900" height="227" loading="lazy" decoding="async" />
+              <span class="panel-rule" aria-hidden="true"></span>
+              <h2>Online<br>Sales</h2>
+              <p class="panel-kicker">Listed online. Found by buyers.</p>
+              <p class="panel-blurb">We photograph, describe and list your things at set prices, then find the buyers.</p>
+              <a class="panel-cta" href="#walkthrough">Ask about an online sale</a>
+            </div>
+          </article>
+          <article class="panel panel--drawn">
+            <div class="panel-sketch"><EstateSaleSketch /></div>
+            <button type="button" class="panel-hit" aria-expanded="false">
+              <span class="panel-index">03</span>
+              <PanelIcon name="estate" />
+              <span class="panel-vert">Estate Sales</span>
+              <span class="panel-plus" aria-hidden="true"></span>
+            </button>
+            <div class="panel-open-copy">
+              <img class="panel-brand" src="/logos/last-call-logo.png" alt="Last Call" width="900" height="227" loading="lazy" decoding="async" />
+              <span class="panel-rule" aria-hidden="true"></span>
+              <h2>Estate<br>Sales</h2>
+              <p class="panel-kicker">See it in the home.</p>
+              <p class="panel-blurb">We price, stage, and run a sale in the house over a few days.</p>
+              <a class="panel-cta" href="#walkthrough">Ask about an estate sale</a>
+            </div>
+          </article>
+          <article class="panel panel--drawn">
+            <div class="panel-sketch"><GarageSaleSketch /></div>
+            <button type="button" class="panel-hit" aria-expanded="false">
+              <span class="panel-index">04</span>
+              <PanelIcon name="garage" />
+              <span class="panel-vert">Garage Sales</span>
+              <span class="panel-plus" aria-hidden="true"></span>
+            </button>
+            <div class="panel-open-copy">
+              <img class="panel-brand" src="/logos/last-call-logo.png" alt="Last Call" width="900" height="227" loading="lazy" decoding="async" />
+              <span class="panel-rule" aria-hidden="true"></span>
+              <h2>Garage<br>Sales</h2>
+              <p class="panel-kicker">A Saturday, on the driveway.</p>
+              <p class="panel-blurb">A neighbourhood sale we set up, run for the day, and tidy after.</p>
+              <a class="panel-cta" href="#walkthrough">Ask about a garage sale</a>
+            </div>
+          </article>
+          <article class="panel panel--drawn">
+            <div class="panel-sketch"><BuyoutSketch /></div>
+            <button type="button" class="panel-hit" aria-expanded="false">
+              <span class="panel-index">05</span>
+              <PanelIcon name="buyout" />
+              <span class="panel-vert">Buyout Offers</span>
+              <span class="panel-plus" aria-hidden="true"></span>
+            </button>
+            <div class="panel-open-copy">
+              <img class="panel-brand" src="/logos/last-call-logo.png" alt="Last Call" width="900" height="227" loading="lazy" decoding="async" />
+              <span class="panel-rule" aria-hidden="true"></span>
+              <h2>Buyout<br>Offers</h2>
+              <p class="panel-kicker">One offer. The house cleared.</p>
+              <p class="panel-blurb">One written offer for everything. Once you accept, we empty the house.</p>
+              <a class="panel-cta" href="#walkthrough">Get a buyout offer</a>
+            </div>
+          </article>
+        </div>
       </section>
+      <script>
+        const acc = document.querySelector('[data-panel-acc]');
+        if (acc instanceof HTMLElement) {
+          acc.addEventListener('click', (event) => {
+            const hit = event.target instanceof Element ? event.target.closest('.panel-hit') : null;
+            const panel = hit?.closest('.panel');
+            if (!(panel instanceof HTMLElement) || panel.classList.contains('is-open')) return;
+            acc.querySelectorAll('.panel').forEach((node) => {
+              node.classList.remove('is-open');
+              node.querySelector('.panel-hit')?.setAttribute('aria-expanded', 'false');
+            });
+            panel.classList.add('is-open');
+            hit?.setAttribute('aria-expanded', 'true');
+          });
+        }
+      </script>
 
-      <!-- LEFTOVERS -->
-      <section id="leftovers" class="bg-pine text-cream">
-        <div class="mx-auto max-w-6xl px-5 py-16 md:py-20 grid gap-10 md:grid-cols-2 md:items-center">
-          <Picture src={hallwayBoxes} formats={['avif', 'webp']} widths={[360, 540, 720, 900]} sizes="(min-width: 768px) 560px, calc(100vw - 2.5rem)" alt="Cardboard boxes marked Donate and Kitchen stacked in a carpeted upstairs hallway" loading="lazy" class="w-full h-auto rounded-2xl aspect-[4/3] object-cover" />
-          <div>
-            <p class="eyebrow mb-3 !text-clay-soft">What happens to what is left</p>
-            <h2 class="text-[2rem] md:text-[2.4rem] font-semibold !text-cream">Nothing is just thrown out.</h2>
-            <ul class="mt-7 space-y-5 text-[1.05rem]">
-              {leftovers.map((l) => (
-                <li><strong class="block text-white">{l.title}</strong><span class="text-[#e8e1d3]">{l.text}</span></li>
+      <!-- AI AGENTS -->
+      <section id="agents" class="agents" aria-label="How our AI agents help" data-agents>
+        <div class="agents-track">
+          <div class="agents-stage">
+            <svg class="agents-belt" aria-hidden="true"><rect fill="none" /><path fill="none" /></svg>
+            <div class="agents-field">
+              <div class="agent-item">
+                <button type="button" class="agent-flip" aria-pressed="false" aria-label="Listing: show more"></button>
+                <div class="agent-flipper">
+                  <div class="agent-face agent-front" aria-hidden="true">
+                    <div class="agent-photo"><Picture src={estateSale} formats={['avif', 'webp']} widths={[400, 720]} sizes="320px" alt="" loading="lazy" /></div>
+                    <div class="agent-panel">
+                      <p class="agent-head"><i></i>Creating listing</p>
+                      <p class="agent-row agent-row-strong"><span>Mantel clock</span><b>$65.00</b></p>
+                      <p class="agent-check">Photographed</p>
+                      <p class="agent-check">Listed</p>
+                    </div>
+                    <span class="agent-hint"></span>
+                  </div>
+                  <div class="agent-face agent-back" aria-hidden="true">
+                    <p class="agent-kicker">Listing</p>
+                    <h3>Every piece gets its own listing.</h3>
+                    <p>An agent turns your photos and price cards into organized listings, so nothing in the house gets missed.</p>
+                    <span class="agent-hint"></span>
+                  </div>
+                </div>
+              </div>
+              <div class="agent-item">
+                <button type="button" class="agent-flip" aria-pressed="false" aria-label="Uploading: show more"></button>
+                <div class="agent-flipper">
+                  <div class="agent-face agent-front" aria-hidden="true">
+                    <div class="agent-photo"><Picture src={estateAuction} formats={['avif', 'webp']} widths={[400, 720]} sizes="320px" alt="" loading="lazy" /></div>
+                    <div class="agent-panel">
+                      <p class="agent-head"><i></i>Uploading photos</p>
+                      <div class="agent-thumbs">
+                        <div class="agent-zoom" style="--z: 2.8; --o: 48% 39%"><Picture src={estateAuction} formats={['avif', 'webp']} widths={[640]} sizes="200px" alt="" loading="lazy" /></div>
+                        <div class="agent-zoom" style="--z: 2.8; --o: 100% 17%"><Picture src={estateSale} formats={['avif', 'webp']} widths={[640]} sizes="200px" alt="" loading="lazy" /></div>
+                        <div class="agent-zoom" style="--z: 2.8; --o: 58% 81%"><Picture src={estateSale} formats={['avif', 'webp']} widths={[640]} sizes="200px" alt="" loading="lazy" /></div>
+                        <div class="agent-zoom" style="--z: 2.8; --o: 38% 100%"><Picture src={estateAuction} formats={['avif', 'webp']} widths={[640]} sizes="200px" alt="" loading="lazy" /></div>
+                      </div>
+                      <p class="agent-bar"><i></i></p>
+                    </div>
+                    <span class="agent-hint"></span>
+                  </div>
+                  <div class="agent-face agent-back" aria-hidden="true">
+                    <p class="agent-kicker">Uploading</p>
+                    <h3>No retyping, no sorting.</h3>
+                    <p>Photos are matched to the right piece and uploaded to its listing, ready to go live without anyone keying it all in.</p>
+                    <span class="agent-hint"></span>
+                  </div>
+                </div>
+              </div>
+              <div class="agent-item">
+                <button type="button" class="agent-flip" aria-pressed="false" aria-label="Writing descriptions: show more"></button>
+                <div class="agent-flipper">
+                  <div class="agent-face agent-front" aria-hidden="true">
+                    <div class="agent-photo agent-zoom" style="--z: 2.7; --o: 76% 28%"><Picture src={estateSale} formats={['avif', 'webp']} widths={[720, 1152]} sizes="640px" alt="" loading="lazy" /></div>
+                    <div class="agent-panel">
+                      <p class="agent-head"><i></i>Writing description</p>
+                      <p class="agent-copy">Antique mantel clock with Roman numerals and a carved wood case. A handsome piece for any shelf.<u></u></p>
+                    </div>
+                    <span class="agent-hint"></span>
+                  </div>
+                  <div class="agent-face agent-back" aria-hidden="true">
+                    <p class="agent-kicker">Describing</p>
+                    <h3>Words that do it justice.</h3>
+                    <p>An agent writes a clear description of each piece: what it is, what makes it special and what condition it is in.</p>
+                    <span class="agent-hint"></span>
+                  </div>
+                </div>
+              </div>
+              <div class="agent-item">
+                <button type="button" class="agent-flip" aria-pressed="false" aria-label="Optimizing: show more"></button>
+                <div class="agent-flipper">
+                  <div class="agent-face agent-front" aria-hidden="true">
+                    <div class="agent-photo agent-zoom" style="--z: 2.4; --o: 60% 20%"><Picture src={antiquesTable} formats={['avif', 'webp']} widths={[720, 1280]} sizes="520px" alt="" loading="lazy" /></div>
+                    <div class="agent-panel">
+                      <p class="agent-head"><i></i>Optimizing listing</p>
+                      <p class="agent-before">Old painting</p>
+                      <p class="agent-row agent-row-strong"><span>Landscape painting in a gilt frame</span></p>
+                      <p class="agent-check">Keywords added</p>
+                    </div>
+                    <span class="agent-hint"></span>
+                  </div>
+                  <div class="agent-face agent-back" aria-hidden="true">
+                    <p class="agent-kicker">Optimizing</p>
+                    <h3>Easy to find, fairly priced.</h3>
+                    <p>Titles, keywords and prices are tuned so each piece shows up when the right person goes looking for it.</p>
+                    <span class="agent-hint"></span>
+                  </div>
+                </div>
+              </div>
+              <div class="agent-item">
+                <button type="button" class="agent-flip" aria-pressed="false" aria-label="Finding buyers: show more"></button>
+                <div class="agent-flipper">
+                  <div class="agent-face agent-front" aria-hidden="true">
+                    <div class="agent-photo"><img src="/hero-family-poster.jpg" width="1280" height="720" alt="" loading="lazy" /></div>
+                    <div class="agent-panel">
+                      <p class="agent-head"><i></i>Finding buyers</p>
+                      <p class="agent-row"><span>Clock collectors</span><em>Notified</em></p>
+                      <p class="agent-row"><span>Antique dealers</span><em>Notified</em></p>
+                      <p class="agent-row"><span>Nearby shoppers</span><em>Notified</em></p>
+                    </div>
+                    <span class="agent-hint"></span>
+                  </div>
+                  <div class="agent-face agent-back" aria-hidden="true">
+                    <p class="agent-kicker">Finding buyers</p>
+                    <h3>Loved again, by the right person.</h3>
+                    <p>Agents look for the people most likely to want each piece, from collectors and dealers to shoppers nearby, and let them know.</p>
+                    <span class="agent-hint"></span>
+                  </div>
+                </div>
+              </div>
+              <div class="agent-item">
+                <button type="button" class="agent-flip" aria-pressed="false" aria-label="Making ads: show more"></button>
+                <div class="agent-flipper">
+                  <div class="agent-face agent-front" aria-hidden="true">
+                    <div class="agent-photo"><Picture src={estateAuction} formats={['avif', 'webp']} widths={[400, 720]} sizes="320px" alt="" loading="lazy" /></div>
+                    <div class="agent-panel agent-ad">
+                      <p class="agent-head"><i></i>Ad ready</p>
+                      <p class="agent-ad-line">Floral china, ready for a new table.</p>
+                      <span class="agent-ad-cta">See the sale</span>
+                    </div>
+                    <span class="agent-hint"></span>
+                  </div>
+                  <div class="agent-face agent-back" aria-hidden="true">
+                    <p class="agent-kicker">Making ads</p>
+                    <h3>Your gems get their own ads.</h3>
+                    <p>An agent writes and designs ads for your best pieces, so the sale reaches people well beyond your street.</p>
+                    <span class="agent-hint"></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <h2 class="agents-line">
+              {agentLine.split(' ').map((word) => (
+                <><span class="agents-word">{word}</span>{' '}</>
               ))}
-            </ul>
+            </h2>
           </div>
         </div>
       </section>
+      <script>
+        import { mountAgents } from '../scripts/agents';
+        const agents = document.querySelector('[data-agents]');
+        if (agents instanceof HTMLElement) mountAgents(agents);
+      </script>
 
-      <!-- TRUST -->
-      <section id="trust" class="mx-auto max-w-6xl px-5 py-16 md:py-20">
-        <div class="grid gap-10 lg:grid-cols-[1fr_1.2fr] lg:items-start">
-          <div>
-            <p class="eyebrow mb-3">Why families trust us</p>
-            <h2 class="text-[2rem] md:text-[2.5rem] font-semibold">Careful with the home. Clear with you.</h2>
-            <Picture src={saleTable} formats={['avif', 'webp']} widths={[400, 640, 900, 1200]} sizes="(min-width: 1024px) 460px, 100vw" alt="A dining table set with brass candlesticks, old books, a mantel clock and cut glass, each with a handwritten price card" loading="lazy" class="mt-8 w-full h-auto rounded-2xl aspect-[4/3] md:aspect-[16/8] lg:aspect-[4/3] object-cover" />
+      <!-- SERVICE AREA -->
+      <section id="area" class="area-band">
+        <div class="area-head">
+          <h2 class="area-title">All across Ontario.<br>Right to your door.</h2>
+        </div>
+        <div class="area-cta">
+          <p class="area-cta-title">Estate auctions and garage sales, near you.</p>
+          <a class="area-cta-btn" href={site.shopUrl}>
+            Shop current sales
+            <svg aria-hidden="true" width="18" height="18" viewBox="0 0 18 18"><path d="M3.5 9h11M10 4.5 14.5 9 10 13.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </a>
+          <p class="area-cta-note">Bid online or come by in person.</p>
+        </div>
+        <div class="area-pan">
+          <div class="area-stage" data-poppies>
+            <svg class="area-base" data-area-base preserveAspectRatio="none" aria-hidden="true"></svg>
+            <canvas aria-hidden="true"></canvas>
+            <div class="area-labels" data-city-labels></div>
           </div>
-          <dl class="grid gap-x-8 gap-y-8 sm:grid-cols-2">
-            <div>
-              <dt class="font-serif text-[1.3rem] font-semibold text-pine-dark">Local across the GTA</dt>
-              <dd class="mt-2 text-muted">We work in homes across {regionList}, and we know how these sales run here.</dd>
-            </div>
-            <div>
-              <dt class="font-serif text-[1.3rem] font-semibold text-pine-dark">A written contract</dt>
-              <dd class="mt-2 text-muted">Every job starts with a signed agreement that sets out the dates, the terms and the plan for leftovers.</dd>
-            </div>
-            <div>
-              <dt class="font-serif text-[1.3rem] font-semibold text-pine-dark">Clear pricing</dt>
-              <dd class="mt-2 text-muted">A buyout is one written offer for the contents, with no hidden fees. For an estate sale, the rule is just as simple. {commissionSentence}</dd>
-            </div>
-            <div>
-              <dt class="font-serif text-[1.3rem] font-semibold text-pine-dark">No pressure, ever</dt>
-              <dd class="mt-2 text-muted">The walkthrough is free. If now is not the right time, that is perfectly fine.</dd>
-            </div>
-            <div class="sm:col-span-2">
-              <dt class="font-serif text-[1.3rem] font-semibold text-pine-dark">Help for executors and realtors</dt>
-              <dd class="mt-2 text-muted">We work to your listing or closing date and coordinate access with you.{P.executorSummary && ` ${P.executorSummary.text}`}</dd>
-            </div>
-          </dl>
+        </div>
+        <div class="map-north" aria-hidden="true">
+          <span>N</span>
+          <svg width="12" height="16" viewBox="0 0 12 16"><path d="M6 0 12 16 6 12 0 16z" fill="currentColor"/></svg>
+        </div>
+        <div class="map-scale" data-map-scale aria-hidden="true">50 km</div>
+      </section>
+      <script>
+        import { mountAreaPoppies } from '../scripts/poppies';
+        const stage = document.querySelector('[data-poppies]');
+        if (stage instanceof HTMLElement) mountAreaPoppies(stage);
+      </script>
+
+      <!-- HOW WE WORK TOGETHER -->
+      <section id="how-we-work" class="mx-auto max-w-6xl px-5 py-16 md:py-20">
+        <div class="mm" data-mindmap hidden>
+          <div class="mm-head">
+            <p class="eyebrow mb-3">How we work together</p>
+            <h2>You bring the home. We bring the rest.</h2>
+            <p class="mt-3 text-muted">Pick a style of sale to see what you bring, what we bring, and where it all meets. Select any octagon to read more<span class="mm-drag-hint">, or drag it around</span>.</p>
+          </div>
+          <div class="mm-stage" data-mm-stage>
+            <svg class="mm-edges" data-mm-edges aria-hidden="true"></svg>
+            <div class="mm-nodes" data-mm-nodes></div>
+          </div>
+          <div class="mm-foot">
+            <div class="mm-detail" data-mm-detail aria-live="polite"></div>
+            <button type="button" class="mm-reset" data-mm-reset hidden>Reset the map</button>
+          </div>
         </div>
 
-        {site.testimonials.length > 0 ? (
+        {site.testimonials.length > 0 && (
           <div class="mt-14 grid gap-6 md:grid-cols-3">
             {site.testimonials.map((t) => (
               <figure class="rounded-2xl bg-paper border border-line p-6">
@@ -266,155 +553,419 @@ const faqs = [
               </figure>
             ))}
           </div>
-        ) : anyPlaceholder && (
-          <div class="mt-14 rounded-2xl border-2 border-dashed border-line p-6 text-center text-muted">
-            [PLACEHOLDER: real client testimonials go here, only with their written permission. This box is hidden on the live site until then.]
-          </div>
         )}
       </section>
 
-      <!-- FAQ -->
-      <section id="faq" class="bg-paper border-y border-line">
-        <div class="mx-auto max-w-4xl px-5 py-16 md:py-20">
-          <p class="eyebrow mb-3">Questions</p>
-          <h2 class="text-[2rem] md:text-[2.5rem] font-semibold">Good questions to ask</h2>
-          <div class="mt-8">
-            {faqs.map((f) => (
-              <details class="faq">
-                <summary>{f.q}</summary>
-                <p class="answer">{f.a}</p>
-              </details>
-            ))}
+      <script>
+        import { mountMindMap } from '../scripts/mindmap';
+        const mindMap = document.querySelector('[data-mindmap]');
+        if (mindMap instanceof HTMLElement) {
+          mindMap.hidden = false;
+          mountMindMap(mindMap);
+        }
+      </script>
+
+      <!-- HOW IT WORKS -->
+      <section id="how" class="quiz-scene" aria-label="How it works" data-mood="0">
+        <div class="trusted trusted--quiz">
+          <p class="eyebrow">Trusted by</p>
+          <div class="logo-marquee">
+            <div class="logo-track">
+              {[false, true].map((copy) => partners.map(({ name, logo, width, height }) => logo ? (
+                <img class="logo-mark" src={logo} alt={copy ? '' : name} aria-hidden={copy ? 'true' : undefined} width={width} height={height} style={`height:${logoHeights[name]}`} loading="eager" decoding="async" />
+              ) : (
+                <span class="logo-word" aria-hidden={copy ? 'true' : undefined}>{name}</span>
+              )))}
+            </div>
           </div>
         </div>
-      </section>
 
-      <!-- SERVICE AREA -->
-      <section id="area" class="mx-auto max-w-6xl px-5 py-16 md:py-20">
-        <p class="eyebrow mb-3">Service area</p>
-        <h2 class="text-[2rem] md:text-[2.5rem] font-semibold">Across the Greater Toronto Area</h2>
-        <p class="mt-4 text-muted max-w-2xl">We serve homes in all five GTA regions, including the cities and towns within them. Just outside? Ask us anyway.</p>
-        <ul class="mt-8 grid grid-cols-2 sm:grid-cols-5 gap-3" aria-label="Regions we serve">
-          {site.regions.map((r) => (
-            <li class="rounded-xl bg-paper border border-line px-5 py-4 font-serif text-[1.3rem] font-semibold text-pine-dark last:col-span-2 sm:last:col-span-1 text-center">{r}</li>
-          ))}
-        </ul>
+        <div class="maze-panel" data-maze aria-hidden="true">
+          <div class="maze-photos">
+            <Picture src={buyoutHouse} formats={['avif', 'webp']} widths={[800, 1400]} sizes="(max-width: 900px) 100vw, 60vw" alt="" loading="lazy" class="maze-photo" data-result-photo="buyout" />
+            <Picture src={estateSale} formats={['avif', 'webp']} widths={[800, 1400]} sizes="(max-width: 900px) 100vw, 60vw" alt="" loading="lazy" class="maze-photo" data-result-photo="estate-sale" />
+            <Picture src={estateAuction} formats={['avif', 'webp']} widths={[800, 1400]} sizes="(max-width: 900px) 100vw, 60vw" alt="" loading="lazy" class="maze-photo" data-result-photo="estate-auction" />
+            <Picture src={garageSale} formats={['avif', 'webp']} widths={[800, 1400]} sizes="(max-width: 900px) 100vw, 60vw" alt="" loading="lazy" class="maze-photo" data-result-photo="garage-sale" />
+            <Picture src={onlineSale} formats={['avif', 'webp']} widths={[800, 1400]} sizes="(max-width: 900px) 100vw, 60vw" alt="" loading="lazy" class="maze-photo" data-result-photo="online-sale" />
+          </div>
+        </div>
+        <div class="quiz" data-quiz>
+          <div class="quiz-top">
+            <h2>How it works</h2>
+            <button type="button" class="quiz-back" data-quiz-back hidden>
+              <svg aria-hidden="true" width="14" height="14" viewBox="0 0 14 14"><path d="M8.8 2.6 4.4 7l4.4 4.4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              Back
+            </button>
+          </div>
+          <div class="quiz-stage">
+            <fieldset class="quiz-step is-on" data-step="0" tabindex="-1">
+              <legend>What brings you to LastCall?</legend>
+              <p class="quiz-lede">Answer four questions about your house. We will suggest the kind of sale that fits.</p>
+              <button type="button" data-pick="downsizing">We are downsizing and cannot take everything</button>
+              <button type="button" data-pick="moving">We are moving and the house needs to be emptied</button>
+              <button type="button" data-pick="estate">We are settling a family estate</button>
+              <button type="button" data-pick="listed">The house is sold or listed, and the contents have to go</button>
+            </fieldset>
+            <fieldset class="quiz-step" data-step="1" tabindex="-1">
+              <legend>When does the house need to be ready?</legend>
+              <button type="button" data-pick="asap">Before a closing or move date, as soon as we can</button>
+              <button type="button" data-pick="weeks">Within the next few weeks</button>
+              <button type="button" data-pick="months">We have a month or two</button>
+              <button type="button" data-pick="flex">We are planning ahead. The date can flex</button>
+            </fieldset>
+            <fieldset class="quiz-step" data-step="2" tabindex="-1">
+              <legend>What are you hoping to sell?</legend>
+              <button type="button" data-pick="everyday">Everyday furniture and household belongings</button>
+              <button type="button" data-pick="collectibles">Good furniture, art, or collectibles</button>
+              <button type="button" data-pick="garage">Things in the garage, shed, or basement</button>
+              <button type="button" data-pick="whole">A full house, with a bit of everything</button>
+            </fieldset>
+            <fieldset class="quiz-step" data-step="3" tabindex="-1">
+              <legend>How would you like this to feel?</legend>
+              <button type="button" data-pick="private">Quiet. We would rather not have strangers through the house</button>
+              <button type="button" data-pick="neighbours">A simple neighbourhood sale is fine</button>
+              <button type="button" data-pick="home">We are comfortable with a sale in the home</button>
+              <button type="button" data-pick="online">We would rather sell it all online</button>
+            </fieldset>
+            <div class="quiz-step quiz-hold" data-step="hold" tabindex="-1">
+              <p class="quiz-hold-line">Looking at your house</p>
+            </div>
+            <div class="quiz-step quiz-result" data-step="result" tabindex="-1">
+              <div class="quiz-mark" data-result-mark aria-hidden="true"></div>
+              <p class="eyebrow" data-result-kicker></p>
+              <h3 data-result-title></h3>
+              <p data-result-copy></p>
+              <div class="quiz-actions">
+                <a class="btn btn-primary" href="#walkthrough">Get started</a>
+                <button type="button" data-quiz-reset>Start over</button>
+              </div>
+            </div>
+          </div>
+          <p class="quiz-note" data-quiz-note></p>
+          <p class="sr-only" data-quiz-live aria-live="polite"></p>
+        </div>
       </section>
+      <script>
+        import { mountMaze } from '../scripts/maze';
+
+        const quiz = document.querySelector('[data-quiz]');
+        if (quiz instanceof HTMLElement) {
+          const steps = Array.from(quiz.querySelectorAll<HTMLElement>('.quiz-step'));
+          const note = quiz.querySelector('[data-quiz-note]');
+          const back = quiz.querySelector<HTMLButtonElement>('[data-quiz-back]');
+          const live = quiz.querySelector('[data-quiz-live]');
+          const world = document.querySelector<HTMLElement>('[data-maze]');
+          const maze = world ? mountMaze(world) : null;
+          const photos = Array.from(document.querySelectorAll<HTMLElement>('[data-result-photo]'));
+          const answers: string[] = [];
+          const results: Record<string, { kicker: string; title: string; copy: string }> = {
+            buyout: {
+              kicker: 'A buyout offer',
+              title: 'One offer. The house cleared.',
+              copy: 'You want this handled without a crowd in the home. We walk through, put one offer in writing, and empty the house once you accept.',
+            },
+            'estate-sale': {
+              kicker: 'An estate sale',
+              title: 'A sale in the home.',
+              copy: 'There is enough in the house, and enough time, for people to come through. We price, stage, and run the sale, then clear what is left.',
+            },
+            'estate-auction': {
+              kicker: 'An estate auction',
+              title: 'Let the bidding find the price.',
+              copy: 'Furniture and collectibles do well when buyers compete. We photograph the lots, run the auction, and arrange pickup.',
+            },
+            'garage-sale': {
+              kicker: 'A garage sale',
+              title: 'A Saturday, on the driveway.',
+              copy: 'This is a neighbourhood sale, not a whole-house production. We set it up, run the day, and tidy after.',
+            },
+            'online-sale': {
+              kicker: 'An online sale',
+              title: 'Listed online. Found by buyers.',
+              copy: 'Nobody has to come through the house to browse. We photograph, describe and list your things at set prices, then find the buyers.',
+            },
+          };
+
+          const scene = quiz.closest<HTMLElement>('.quiz-scene');
+          const marks: Record<string, string> = {
+            buyout: '<path d="M4 12 12 5l8 7v7H4z"/>',
+            'estate-sale': '<path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>',
+            'estate-auction': '<path d="m14 13-8.381 8.38a1 1 0 0 1-3-3l8.384-8.381"/><path d="m16 16 6-6"/><path d="m21.5 10.5-8-8"/><path d="m8 8 6-6"/><path d="m8.5 7.5 8 8"/>',
+            'garage-sale': '<path d="M18 21V10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1v11"/><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V8a2 2 0 0 1 1.132-1.803l7.95-3.974a2 2 0 0 1 1.837 0l7.948 3.974A2 2 0 0 1 22 8z"/><path d="M6 13h12"/><path d="M6 17h12"/>',
+            'online-sale': '<circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/>',
+          };
+          const notes = ['Four short questions to the door.', 'Three more to the door.', 'Two more to the door.', 'Last one.', 'You made it to the door.'];
+          const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+          const settleMs = reduceMotion ? 0 : 760;
+          let place = 0;
+          let busy = false;
+
+          const show = (index: number | 'result' | 'hold', moveFocus = true) => {
+            place = index === 'hold' ? 4 : index === 'result' ? 5 : index;
+            const square = Math.min(place, 4);
+            steps.forEach((step) => {
+              const on = step.dataset.step === String(index);
+              if (!on && step.classList.contains('is-on') && !reduceMotion) {
+                step.classList.add('is-leaving');
+                window.setTimeout(() => step.classList.remove('is-leaving'), 420);
+              }
+              if (on) step.classList.remove('is-leaving');
+              step.classList.toggle('is-on', on);
+            });
+            if (note) note.textContent = notes[square];
+            if (back) back.hidden = place < 1 || place > 3;
+            if (scene) scene.dataset.mood = index === 'hold' || index === 'result' ? String(index) : String(place);
+            maze?.goTo(square);
+            if (!moveFocus) return;
+            if (live) live.textContent = place < 4 ? `Question ${place + 1} of 4` : index === 'hold' ? 'Looking at your house' : `We suggest ${quiz.querySelector('[data-result-kicker]')?.textContent?.toLowerCase()}`;
+            steps.find((step) => step.classList.contains('is-on'))?.focus({ preventScroll: true });
+          };
+
+          const recommend = () => {
+            const score: Record<string, number> = { buyout: 0, 'estate-sale': 0, 'estate-auction': 0, 'garage-sale': 0, 'online-sale': 0 };
+            const bump = (key: string, n: number) => { score[key] += n; };
+            const [why, when, what, who] = answers;
+            if (why === 'downsizing') bump('estate-sale', 2);
+            if (why === 'moving') { bump('buyout', 2); bump('garage-sale', 1); }
+            if (why === 'estate') { bump('estate-sale', 2); bump('estate-auction', 2); }
+            if (why === 'listed') bump('buyout', 3);
+            if (when === 'asap') { bump('buyout', 3); bump('online-sale', 1); }
+            if (when === 'weeks') { bump('garage-sale', 2); bump('online-sale', 1); bump('estate-auction', 1); }
+            if (when === 'months') { bump('estate-sale', 2); bump('estate-auction', 2); }
+            if (when === 'flex') bump('estate-sale', 2);
+            if (what === 'everyday') { bump('garage-sale', 2); bump('buyout', 1); }
+            if (what === 'collectibles') { bump('estate-auction', 3); bump('estate-sale', 1); }
+            if (what === 'garage') { bump('garage-sale', 3); bump('online-sale', 2); }
+            if (what === 'whole') { bump('estate-sale', 2); bump('buyout', 2); }
+            if (who === 'private') bump('buyout', 3);
+            if (who === 'neighbours') bump('garage-sale', 3);
+            if (who === 'home') bump('estate-sale', 3);
+            if (who === 'online') { bump('estate-auction', 3); bump('online-sale', 5); }
+            return Object.entries(score).sort((a, b) => b[1] - a[1])[0][0];
+          };
+
+          const setResult = (key: string) => {
+            const result = results[key];
+            const kicker = quiz.querySelector('[data-result-kicker]');
+            const title = quiz.querySelector('[data-result-title]');
+            const copy = quiz.querySelector('[data-result-copy]');
+            const mark = quiz.querySelector('[data-result-mark]');
+            if (kicker) kicker.textContent = result.kicker;
+            if (title) title.textContent = result.title;
+            if (copy) copy.textContent = result.copy;
+            if (mark) mark.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">${marks[key] || ''}</svg>`;
+            // Shown now so the photo has loaded by the time you step through the door.
+            photos.forEach((photo) => photo.classList.toggle('is-on', photo.dataset.resultPhoto === key));
+          };
+
+          quiz.addEventListener('click', (event) => {
+            if (!(event.target instanceof Element)) return;
+            const pick = event.target.closest<HTMLButtonElement>('[data-pick]');
+            if (pick) {
+              if (busy) return;
+              busy = true;
+              const step = pick.closest<HTMLElement>('[data-step]');
+              const index = Number(step?.dataset.step || 0);
+              answers[index] = pick.dataset.pick || '';
+              step?.querySelectorAll('[data-pick]').forEach((option) => option.classList.toggle('is-chosen', option === pick));
+              window.setTimeout(() => {
+                if (index < 3) {
+                  show(index + 1);
+                  window.setTimeout(() => { busy = false; }, settleMs);
+                  return;
+                }
+                setResult(recommend());
+                show('hold');
+                window.setTimeout(() => {
+                  show('result');
+                  busy = false;
+                }, reduceMotion ? 250 : 2500);
+              }, reduceMotion ? 0 : 300);
+              return;
+            }
+            if (event.target.closest('[data-quiz-back]')) {
+              if (!busy && place > 0) show(place - 1);
+              return;
+            }
+            if (event.target.closest('[data-quiz-reset]')) {
+              answers.length = 0;
+              quiz.querySelectorAll('.is-chosen').forEach((option) => option.classList.remove('is-chosen'));
+              show(0);
+              maze?.goTo(0, true);
+            }
+          });
+          show(0, false);
+        }
+      </script>
 
       <!-- FORM -->
-      <section id="walkthrough" class="bg-sand border-t border-line">
-        <div class="mx-auto max-w-6xl px-5 py-16 md:py-20 grid grid-cols-1 gap-10 lg:grid-cols-[1fr_1.3fr]">
-          <div>
-            <p class="eyebrow mb-3">Free, written offer</p>
-            <h2 class="text-[2rem] md:text-[2.5rem] font-semibold">Get your free offer.</h2>
-            <p class="mt-4 text-muted">Leave your details and we will call you to set up a free walkthrough. After it, you get one written offer for the contents, or our honest advice if a sale would suit the home better. There is no obligation.{P.replyOneBusinessDay && ` ${P.replyOneBusinessDay.text}`}</p>
-            <div class="mt-8 rounded-2xl bg-paper border border-line p-6">
-              <p class="font-bold">Prefer to talk now?</p>
-              <a href={telHref} class="mt-2 inline-flex min-h-12 items-center font-serif text-[1.7rem] font-semibold text-pine-dark underline decoration-clay-soft decoration-2 underline-offset-4">{site.phoneDisplay}</a>
-              <p class="text-muted text-[0.95rem]">{site.hours}</p>
+      <section id="walkthrough" class="quiz-scene capture" data-mood="0">
+        <div class="maze-panel" data-sale-scenes aria-hidden="true"></div>
+        <div class="quiz">
+          <div class="quiz-top">
+            <h2>Get started</h2>
+          </div>
+
+          <div id="form-error" class="state capture-alert" tabindex="-1" role="alert">
+            <p>Sorry, we could not send that. Please check your details and try again, or call <a href={telHref}>{site.phoneDisplay}</a>.</p>
+          </div>
+          <div id="too-large" class="state capture-alert" tabindex="-1" role="alert">
+            <p>{tooLargeMessage}</p>
+          </div>
+
+          <div class="quiz-stage">
+            <div class="capture-form" data-capture-form>
+              <h3 class="capture-q">Let Lastcall handle the sale. You get what it's worth.</h3>
+              <form action="/api/walkthrough" method="post" enctype="multipart/form-data" data-walkthrough>
+                <div class="capture-row">
+                  <label for="f-name">Name</label>
+                  <input id="f-name" name="name" type="text" required minlength="2" maxlength="100" autocomplete="name" enterkeyhint="next" />
+                  <p class="error" id="e-name" hidden></p>
+                </div>
+                <div class="capture-row">
+                  <label for="f-email">Email</label>
+                  <input id="f-email" name="email" type="email" required maxlength="200" autocomplete="email" inputmode="email" enterkeyhint="next" />
+                  <p class="error" id="e-email" hidden></p>
+                </div>
+                <div class="capture-row">
+                  <label for="f-phone">Phone</label>
+                  <input id="f-phone" name="phone" type="tel" maxlength="20" autocomplete="tel" inputmode="tel" enterkeyhint="next" placeholder="Optional" />
+                  <p class="error" id="e-phone" hidden></p>
+                </div>
+                <div class="capture-row">
+                  <label for="f-location">Location</label>
+                  <input id="f-location" name="location" type="text" maxlength="100" autocomplete="address-level2" enterkeyhint="send" placeholder="Optional" />
+                  <p class="error" id="e-location" hidden></p>
+                </div>
+                <div class="hp" aria-hidden="true">
+                  <label for="f-website">Leave this empty</label>
+                  <input id="f-website" name="website" type="text" tabindex="-1" autocomplete="off" />
+                </div>
+                <input type="hidden" name="started" value="" />
+                <p class="capture-error" id="e-form" role="alert" hidden></p>
+                <button type="submit" class="capture-go">{cta}</button>
+              </form>
+              <p class="capture-fine">We only use your details to contact you about this request. No mailing lists.</p>
+            </div>
+
+            <div id="thanks" class="state quiz-result capture-done" tabindex="-1" role="status">
+              <div class="quiz-mark" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="m11 17 2 2a1 1 0 1 0 3-3"/><path d="m14 14 2.5 2.5a1 1 0 1 0 3-3l-3.88-3.88a3 3 0 0 0-4.24 0l-.88.88a1 1 0 1 1-3-3l2.81-2.81a5.79 5.79 0 0 1 7.06-.87l.47.28a2 2 0 0 0 1.42.25L21 4"/><path d="m21 3 1 11h-2"/><path d="M3 3 2 14l6.5 6.5a1 1 0 1 0 3-3"/><path d="M3 4h8"/></svg>
+              </div>
+              <p class="eyebrow">You're all set</p>
+              <h3>We'll take it from here.</h3>
+              <p>We will be in touch{P.replyOneBusinessDay ? ' within one business day' : ' soon'} to set up your free walkthrough. Need us sooner? Call <a href={telHref}>{site.phoneDisplay}</a>.</p>
+              <p id="demo-note" class="capture-demo" hidden>Demo mode: your details were checked, but nothing was sent.</p>
             </div>
           </div>
 
-          <div class="min-w-0">
-            <div id="thanks" class="state rounded-2xl bg-paper border border-line p-8" tabindex="-1" role="status">
-              <h3 class="text-[1.8rem] font-semibold">Thank you. We have your request.</h3>
-              <p class="mt-3 text-muted">We will call you{P.replyOneBusinessDay ? ' within one business day' : ' soon'} to set up a walkthrough at a time that suits you. If it is urgent, please call us at <a class="font-bold text-pine-dark" href={telHref}>{site.phoneDisplay}</a>.</p>
-              <p id="demo-note" class="mt-4 text-[0.9rem] rounded-lg bg-sand px-4 py-3" hidden>Demo mode: the form checked your details but nothing was sent.</p>
-            </div>
-
-            <div id="form-error" class="state mb-5 rounded-xl border-2 border-[#8a1f11] bg-paper p-5" tabindex="-1" role="alert">
-              <p class="font-bold text-[#8a1f11]">Sorry, we could not send that.</p>
-              <p class="text-muted">Please check each field and try again, or call us at <a class="font-bold text-pine-dark" href={telHref}>{site.phoneDisplay}</a>.</p>
-            </div>
-
-            <div id="too-large" class="state mb-5 rounded-xl border-2 border-[#8a1f11] bg-paper p-5" tabindex="-1" role="alert">
-              <p class="font-bold text-[#8a1f11]">Those photos were too large to send.</p>
-              <p class="text-muted">{tooLargeMessage}</p>
-              <p class="mt-3"><a class="btn btn-secondary" href="#f-name">Back to the form</a></p>
-            </div>
-
-            <form class="form-card min-w-0 rounded-2xl bg-paper border border-line p-6 md:p-8 grid gap-5" action="/api/walkthrough" method="post" enctype="multipart/form-data" data-walkthrough novalidate>
-              <div class="field">
-                <label for="f-name">Your name</label>
-                <input id="f-name" name="name" type="text" autocomplete="name" required minlength="2" maxlength="100" />
-                <p class="error" id="e-name" hidden></p>
-              </div>
-              <div class="field">
-                <label for="f-phone">Phone number <span class="hint">We will call you back on this number.</span></label>
-                <input id="f-phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" required pattern="[0-9()+\-. ]{10,20}" />
-                <p class="error" id="e-phone" hidden></p>
-              </div>
-              <div class="grid gap-5 sm:grid-cols-2">
-                <div class="field">
-                  <label for="f-region">Region</label>
-                  <select id="f-region" name="region" required>
-                    <option value="" selected disabled>Choose a region</option>
-                    {regionOptions.map((r) => <option value={r}>{r}</option>)}
-                  </select>
-                  <p class="error" id="e-region" hidden></p>
-                </div>
-                <div class="field">
-                  <label for="f-timeline">When do you need help?</label>
-                  <select id="f-timeline" name="timeline" required>
-                    <option value="" selected disabled>Choose a timeline</option>
-                    {timelines.map((t) => <option value={t.value}>{t.label}</option>)}
-                  </select>
-                  <p class="error" id="e-timeline" hidden></p>
-                </div>
-              </div>
-              <div class="field">
-                <label for="f-photos">Photos of the home <span class="hint">Optional. Up to {uploadLimits.maxFiles} photos help us prepare, but they are not needed.</span></label>
-                <input id="f-photos" name="photos" type="file" accept="image/*" multiple />
-                <p class="hint mt-2" id="photo-status" aria-live="polite"></p>
-                <p class="error" id="e-photos" hidden></p>
-              </div>
-              <div class="hp" aria-hidden="true">
-                <label for="f-website">Leave this empty</label>
-                <input id="f-website" name="website" type="text" tabindex="-1" autocomplete="off" />
-              </div>
-              <input type="hidden" name="started" value="" />
-              <p class="error font-bold text-[#8a1f11]" id="e-form" hidden></p>
-              <button type="submit" class="btn btn-primary w-full text-[1.1rem] !min-h-14 !whitespace-normal text-center">{cta}</button>
-              <p class="text-[0.9rem] text-muted">We only use your details to contact you about this request. We do not share them or add you to a mailing list.</p>
-            </form>
-          </div>
+          <p class="quiz-note">Free walkthrough. No obligation. Or call <a href={telHref}>{site.phoneDisplay}</a>.</p>
         </div>
       </section>
+
+      <!-- FAQ -->
+      <section id="faq" class="bingo" aria-labelledby="faq-title" data-bingo>
+        <p class="bingo-status" data-bingo-status aria-live="polite">Flip a square to see the answer.</p>
+        <div class="bingo-sheet">
+          <h2 id="faq-title" class="bingo-letters" aria-label="FAQ">
+            {['F', 'A', 'Q'].map((letter) => <span aria-hidden="true">{letter}</span>)}
+          </h2>
+          <ul class="bingo-grid">
+            {bingoSquares.map((square, i) => square ? (
+              <li class="bingo-square">
+                <button type="button" class="bingo-flip" aria-expanded="false" aria-controls={`faq-a-${i}`} aria-labelledby={`faq-q-${i}`}></button>
+                <div class="bingo-inner">
+                  <div class="bingo-face bingo-front">
+                    <span class="bingo-number" aria-hidden="true">{square.number}</span>
+                    <h3 id={`faq-q-${i}`}>{square.q}</h3>
+                    <span class="bingo-hint" aria-hidden="true">Flip</span>
+                  </div>
+                  <div class="bingo-face bingo-back" id={`faq-a-${i}`}>
+                    <p>{square.a}</p>
+                    <span class="bingo-hint" aria-hidden="true">Flip back</span>
+                  </div>
+                </div>
+              </li>
+            ) : (
+              <li class="bingo-free">
+                <a href="#walkthrough">
+                  <strong>Free</strong>
+                  <span>walkthrough</span>
+                  <em>{cta}</em>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+      <script>
+        import { mountBingo } from '../scripts/bingo';
+        const bingo = document.querySelector('[data-bingo]');
+        if (bingo instanceof HTMLElement) mountBingo(bingo);
+      </script>
     </main>
 
-    <footer class="bg-pine-dark text-[#e8e1d3]">
-      <div class="mx-auto max-w-6xl px-5 py-12 grid gap-8 md:grid-cols-3">
-        <div>
-          <p class="font-serif text-[1.4rem] font-semibold text-white">{site.businessName}</p>
-          <p class="mt-2">Full house buyouts and estate sales across {regionList}.</p>
-        </div>
-        <div>
-          <p class="font-bold text-white">Contact</p>
-          <p><a class="inline-flex min-h-12 items-center text-white underline underline-offset-4" href={telHref}>{site.phoneDisplay}</a></p>
-          <p><a class="inline-flex min-h-12 items-center text-white underline underline-offset-4" href={`mailto:${site.email}`}>{site.email}</a></p>
-          <p>{site.hours}</p>
-        </div>
-        <div>
-          <p class="font-bold text-white">Get started</p>
-          <a href="#walkthrough" class="btn btn-secondary mt-3 !whitespace-normal text-center">{cta}</a>
-        </div>
+    <footer class="bid-footer" data-bid-footer>
+      <p class="bid-status" data-bid-status aria-hidden="true"></p>
+      <div class="bid-logo" data-bid-logo>
+        <span class="bid-logo-inner">
+          <button type="button" class="bid-bell" data-bid-bell aria-label="Ring the bell to place a bid">
+            <img class="bid-bell-rays" src="/logos/bid/bell-rays.png" alt="" style="width:1.061em;height:0.302em" />
+            <img class="bid-bell-body" src="/logos/bid/bell-body.png" alt="" style="width:1.061em;height:0.698em" />
+          </button>
+          <span class="bid-words" role="img" aria-label="Last Call">
+            <span class="bid-word" aria-hidden="true">
+              <span class="bid-letter"><img src="/logos/bid/L.png" alt="" style="width:0.523em" /></span>
+              <span class="bid-letter"><img src="/logos/bid/a1.png" alt="" style="width:0.375em" /></span>
+              <span class="bid-letter"><img src="/logos/bid/s.png" alt="" style="width:0.289em" /></span>
+              <span class="bid-letter"><img src="/logos/bid/t.png" alt="" style="width:0.261em" /></span>
+            </span>
+            <span class="bid-word" aria-hidden="true">
+              <span class="bid-letter"><img src="/logos/bid/C.png" alt="" style="width:0.507em" /></span>
+              <span class="bid-letter"><img src="/logos/bid/a2.png" alt="" style="width:0.334em" /></span>
+              <span class="bid-letter"><img src="/logos/bid/l1.png" alt="" style="width:0.211em" /></span>
+              <span class="bid-letter"><img src="/logos/bid/l2.png" alt="" style="width:0.202em" /></span>
+              <span class="bid-letter"><img src="/logos/bid/dot.png" alt="" style="width:0.166em" /></span>
+            </span>
+          </span>
+        </span>
       </div>
-      <div class="border-t border-white/15">
-        <p class="mx-auto max-w-6xl px-5 py-5 text-[0.85rem]">&copy; {year} {site.businessName}. This site does not use tracking cookies or analytics.</p>
+      <div class="bid-layer" data-bid-layer aria-hidden="true"></div>
+      <div class="bid-stamp" aria-hidden="true">Sold</div>
+      <div class="bid-legal">
+        <p><a href={telHref}>{site.phoneDisplay}</a></p>
+        <p><a href={`mailto:${site.email}`}>{site.email}</a></p>
+        <p>{site.hours}</p>
+        <p><a href="/credits.txt">Photo credits</a></p>
+        <p>&copy; {year} {site.businessName}. No tracking cookies or analytics.</p>
       </div>
     </footer>
 
-    <!-- Mobile click-to-call bar -->
-    <div data-callbar class="md:hidden fixed inset-x-0 bottom-0 z-40 bg-paper/95 backdrop-blur border-t border-line px-3 py-3 grid grid-cols-2 gap-3" style="padding-bottom: max(0.75rem, env(safe-area-inset-bottom));">
-      <a href="#walkthrough" class="btn btn-primary !px-3 !whitespace-normal text-center">{cta}</a>
-      <a href={telHref} class="btn btn-secondary !px-3">
-        <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1z"/></svg>
-        Call now
-      </a>
-    </div>
-
     <script>
       import '../scripts/form';
+      import { mountScenes } from '../scripts/scenes';
+      import { mountBidFooter } from '../scripts/bid-footer';
+
+      document.documentElement.classList.add('js');
+      mountScenes();
+
+      const bidFooter = document.querySelector('[data-bid-footer]');
+      if (bidFooter instanceof HTMLElement) mountBidFooter(bidFooter);
+
+      const revealItems = document.querySelectorAll('.sale-listing, .sale-path-step');
+      if ('IntersectionObserver' in window) {
+        const revealObserver = new IntersectionObserver((entries, observer) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('is-visible');
+              observer.unobserve(entry.target);
+            }
+          });
+        }, { threshold: 0.12 });
+        revealItems.forEach((item) => revealObserver.observe(item));
+      } else {
+        revealItems.forEach((item) => item.classList.add('is-visible'));
+      }
     </script>
   </body>
 </html>

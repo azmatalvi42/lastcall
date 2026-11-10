@@ -1,29 +1,32 @@
 import { z } from 'zod';
-import { regionOptions, timelines, uploadLimits, site, tooLargeMessage, servicePromises } from '../config/site';
+import { timelines, uploadLimits, site, tooLargeMessage, servicePromises } from '../config/site';
 
-/** Minimum time a real person needs to fill the form (ms). */
-export const MIN_FILL_MS = 3000;
+/** Minimum time a real person needs to fill the form (ms). The first step is one autofilled field, so this is short. */
+export const MIN_FILL_MS = 1500;
 /** Anything older than this is a stale or replayed page (ms). */
 export const MAX_FILL_MS = 1000 * 60 * 60 * 24;
 
 const timelineValues = timelines.map((t) => t.value) as [string, ...string[]];
 
+const oneLine = (v: string) => v.replace(/\s+/g, ' ').trim();
+
+/** Only the email is required, so that a lead is saved at the first step. The rest arrives if they choose to add it. */
 export const walkthroughSchema = z.object({
-  name: z
+  email: z
     .string()
     .trim()
-    .min(2, 'Please tell us your name.')
-    .max(100, 'Please use a shorter name.'),
+    .min(1, 'Please enter your email.')
+    .max(200, 'Please use a shorter email.')
+    .email('Please enter a valid email address.'),
+  name: z.string().transform(oneLine).pipe(z.string().max(100, 'Please use a shorter name.')),
   phone: z
     .string()
     .trim()
     .transform((v) => v.replace(/\D/g, ''))
     .transform((d) => (d.length === 11 && d.startsWith('1') ? d.slice(1) : d))
-    .refine((d) => d.length === 10, 'Please enter a 10 digit phone number.'),
-  region: z.enum(regionOptions as unknown as [string, ...string[]], {
-    message: 'Please choose your region.',
-  }),
-  timeline: z.enum(timelineValues, { message: 'Please choose a timeline.' }),
+    .refine((d) => d === '' || d.length === 10, 'Please enter a 10 digit phone number.'),
+  location: z.string().transform(oneLine).pipe(z.string().max(100, 'Please use a shorter location.')),
+  timeline: z.enum(['', ...timelineValues], { message: 'Please choose a timeline.' }),
 });
 
 export type WalkthroughLead = z.infer<typeof walkthroughSchema>;
@@ -89,24 +92,33 @@ export async function readPhotos(entries: FormDataEntryValue[]): Promise<PhotoCh
 }
 
 export function buildEmail(lead: WalkthroughLead, photos: Photo[], env: Env): OutgoingEmail {
-  const timeline = timelines.find((t) => t.value === lead.timeline)?.label ?? lead.timeline;
+  const timeline = timelines.find((t) => t.value === lead.timeline)?.label;
+  const hasDetails = Boolean(lead.name || lead.phone || lead.location || lead.timeline || photos.length);
+  const followUp = lead.phone ? 'call them back' : 'email them back';
   const text = [
-    `New free walkthrough request from the ${site.businessName} website.`,
+    hasDetails
+      ? `More details from a lead on the ${site.businessName} website.`
+      : `New lead from the ${site.businessName} website. They may send more details shortly.`,
     '',
-    `Name: ${lead.name}`,
-    `Phone: ${formatPhone(lead.phone)}`,
-    `Region: ${lead.region}`,
-    `Timeline: ${timeline}`,
-    `Photos attached: ${photos.length}`,
+    `Email: ${lead.email}`,
+    lead.name ? `Name: ${lead.name}` : false,
+    lead.phone ? `Phone: ${formatPhone(lead.phone)}` : false,
+    lead.location ? `Location: ${lead.location}` : false,
+    timeline ? `Timeline: ${timeline}` : false,
+    photos.length > 0 ? `Photos attached: ${photos.length}` : false,
     '',
     servicePromises.replyOneBusinessDay
-      ? 'Please call them back within one business day (the site promises this).'
-      : 'Please call them back as soon as you can.',
-  ].join('\n');
+      ? `Please ${followUp} within one business day (the site promises this).`
+      : `Please ${followUp} as soon as you can.`,
+  ]
+    .filter((line) => line !== false)
+    .join('\n')
+    .replace(/\n{3,}/g, '\n\n');
+  const who = [lead.name || lead.email, lead.location].filter(Boolean).join(', ');
   return {
     from: env.LEAD_FROM_EMAIL!,
     to: env.LEAD_TO_EMAIL!,
-    subject: `Walkthrough request: ${lead.name}, ${lead.region}`,
+    subject: hasDetails ? `Lead details: ${who}` : `New lead: ${lead.email}`,
     text,
     attachments: photos.map((p) => ({ filename: p.filename, content: Buffer.from(p.bytes) })),
   };
@@ -144,9 +156,10 @@ export async function processSubmission(form: FormData, env: Env, deps: Deps = {
   }
 
   const parsed = walkthroughSchema.safeParse({
+    email: form.get('email') ?? '',
     name: form.get('name') ?? '',
     phone: form.get('phone') ?? '',
-    region: form.get('region') ?? '',
+    location: form.get('location') ?? '',
     timeline: form.get('timeline') ?? '',
   });
   if (!parsed.success) {
@@ -163,7 +176,7 @@ export async function processSubmission(form: FormData, env: Env, deps: Deps = {
 
   if (isDemoMode(env)) {
     log('[walkthrough] DEMO MODE: valid request, nothing sent', {
-      region: parsed.data.region,
+      hasPhone: Boolean(parsed.data.phone),
       timeline: parsed.data.timeline,
       photos: photoCheck.photos.length,
     });

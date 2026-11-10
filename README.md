@@ -6,14 +6,18 @@ The lead offer is the full house buyout. One goal: get a "Get my free offer" req
 ## What is in here
 
 - `src/config/site.ts`: the ONE file with the business name, every placeholder (phone, email, hours, site URL), the region and timeline options, the exact commission sentence (`commissionSentence`) and the `servicePromises` block. The promises (keepsakes first, donations, broom-clean, executor summary, reply within one business day) are UNCONFIRMED: delete an entry and it disappears from the site, the lead email and the ad copy. Each placeholder has an `...IsPlaceholder` flag. While any flag is true, a slim "Preview" notice shows at the top of the page and a testimonial placeholder box is shown.
-- `src/pages/index.astro`: the page. Sections in order: hero (buyout first), two options (buyout card first, then "We run the sale for you"), how it works, leftovers, why trust us, FAQ (native `<details>`), service area, form, footer. Sticky click-to-call bar on mobile; phone always in the header on desktop.
+- `src/pages/index.astro`: the page. Sections in order: hero (buyout first), two options (buyout card first, then "We run the sale for you"), AI agents, how it works (with the "Trusted by" logo strip along its bottom), FAQ bingo sheet, how we work together (mind map), service area (with the "Shop current sales" button for buyers, linked to `site.shopUrl`), form, footer. Sticky click-to-call bar on mobile; phone always in the header on desktop.
 - `src/lib/walkthrough.ts`: form validation (zod), spam checks, photo checks, email building and the request handler. Pure and tested.
 - `api/walkthrough.ts`: the single Vercel Function (`POST /api/walkthrough`).
-- `src/scripts/form.ts`: the only client JS. Resizes photos to 1600px max in the browser, enforces 5 photos and a 4MB total (the server also caps the whole request at 4MB; see `docs/DEPLOY.md`), submits with fetch and shows inline errors. Without JS, the form still posts normally and the server redirects to `/#thanks`, `/#form-error` or `/#too-large`, which CSS shows with `:target`.
+- `src/scripts/form.ts`: the lead form. Name and email are required, phone and location are optional, and each input filled brings up the next hand-drawn scene from `src/scripts/sale-scenes.ts`: listing, bidding, payment, then the closing handshake. The hero's email box saves the lead immediately, then brings them to the form. Without JS, both forms still post and the server redirects to the thank-you state.
 - `tests/walkthrough.test.ts`: vitest tests.
 - `ads/`: 10 ad PNGs. The copy lives in `ads/ads.ts` (reads `src/config/site.ts`), the one HTML template is `ads/templates/ad.html`, and `ads/COPY.md` is generated. Ad 1 (buyout) is the flagship.
 - `share/`: small JPG copies of the screenshots and ads for sending in chat.
 - `screenshots/`, `lighthouse/`: review artifacts.
+
+## Photos and video
+
+All site photos and hero clips are real stock under free commercial licenses (Pexels, Unsplash, Burst, Wikimedia Commons). Sources, authors and licenses are in `public/credits.txt`, which the footer links to. The garage sale photo was supplied by the owner; confirm its source and license before launch. The hero clips are 7s, 1920x1080, H.264 with no audio and one shared warm grade.
 
 ## Commands (Node 22.12 or newer)
 

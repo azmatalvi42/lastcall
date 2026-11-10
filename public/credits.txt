@@ -1,0 +1,31 @@
+Lastcall: photo and video credits
+=================================
+
+Garage sale photo (src/assets/img/garage-sale.jpg)
+  Supplied by the site owner (public/garage-sale-pic.jpg). Source and license: TO CONFIRM.
+
+No attribution required (credited with thanks)
+----------------------------------------------
+Hero video, doorway: "A Woman Entering a Living Room" by Taryn Elliott, Pexels
+  https://www.pexels.com/video/a-woman-entering-a-living-room-3769965/
+Hero video, packing: "An Elderly Woman Putting the Picture Frames in a Box" by cottonbro studio, Pexels
+  https://www.pexels.com/video/an-elderly-woman-putting-the-picture-frames-in-a-box-6942746/
+Hero video, wrapping: "Woman wrapping a bowl" by Monstera Production, Pexels
+  https://www.pexels.com/video/woman-wrapping-a-bowl-5329920/
+Hero video, photo album: "A Family Looking at Photo Album Together" by cottonbro studio, Pexels
+  https://www.pexels.com/video/a-family-looking-at-photo-album-together-8848819/
+  Pexels License: https://www.pexels.com/license/
+
+Estate auctions: photo by Eric Prouzet, Unsplash
+  https://unsplash.com/photos/a-shelf-filled-with-lots-of-different-types-of-vases-EVV0a6Fmc3M
+Online sales: photo by Amanz, Unsplash
+  https://unsplash.com/photos/a-person-taking-a-picture-of-a-lamp-on-a-cell-phone-oVeEbTl89hs
+Estate sales: photo by Jazmin Quaynor, Unsplash
+  https://unsplash.com/photos/white-wooden-cabinet-near-table-inside-room-MbY_q6A7lK0
+Antiques table: photo by Vasilis Caravitis, Unsplash
+  https://unsplash.com/photos/qn5NTyUK2fg
+  Unsplash License: https://unsplash.com/license
+
+Buyout offers: "Brick Country Home" by Shopify Partners, Burst
+  https://www.shopify.com/stock-photos/photos/brick-country-home
+  License: https://www.shopify.com/stock-photos/licenses/shopify-some-rights-reserved

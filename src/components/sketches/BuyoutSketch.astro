@@ -1,0 +1,79 @@
+---
+// Buyout, drawn in ink: one offer arrives, it's accepted, the truck takes everything, the house is left clear.
+---
+<svg class="sketch sk-buyout" viewBox="0 0 600 600" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false">
+  <g class="sk-ink">
+    <path class="d" pathLength="1" d="M18 482 C200 476 420 486 582 478" />
+
+    <!-- the house -->
+    <path class="paper d" pathLength="1" d="M264 218 V172 H290 V242" />
+    <path class="paper d" pathLength="1" d="M82 482 V282 H318 V482" />
+    <path class="hatch-fill" d="M290 284 H316 V480 H290 Z" />
+    <path class="d" pathLength="1" d="M58 296 L200 160 L342 296" />
+    <circle class="paper d" pathLength="1" cx="200" cy="238" r="17" />
+    <path class="thin" d="M183 238 H217 M200 221 V255" />
+    <path class="paper d" pathLength="1" d="M176 482 V398 Q200 384 224 398 V482" />
+    <path class="pop pop-o" d="M176 482 V398 Q200 384 224 398 V482 Z" />
+    <circle cx="214" cy="440" r="3" class="ink-fill" />
+
+    <rect class="paper d" pathLength="1" x="104" y="318" width="56" height="54" rx="3" />
+    <rect class="paper d" pathLength="1" x="240" y="318" width="56" height="54" rx="3" />
+    <g class="bo-stuff">
+      <path class="thin" d="M114 340 h18 l-4 -11 h-10 Z M123 340 V370 M116 370 h14" />
+      <path class="pop pop-y" d="M114 340 h18 l-4 -11 h-10 Z" />
+      <path class="thin" d="M140 370 h14 l-2 -12 h-10 Z M147 358 c-6 -10 -2 -18 4 -20 M147 358 c4 -8 10 -10 12 -8" />
+      <rect class="thin" x="250" y="326" width="22" height="18" />
+      <path class="pop pop-b" d="M250 326 h22 v18 h-22 Z" />
+      <path class="thin" d="M262 370 h28 v-16 h-28 Z M268 354 h18 v-12 h-18 Z" />
+    </g>
+    <path class="d" pathLength="1" d="M132 318 V372 M104 345 H160 M268 318 V372 M240 345 H296" />
+
+    <g class="bo-clean">
+      <path class="pop pop-y" d="M132 300 l4 -11 l4 11 l11 4 l-11 4 l-4 11 l-4 -11 l-11 -4 Z" />
+      <path class="thin" d="M132 300 l4 -11 l4 11 l11 4 l-11 4 l-4 11 l-4 -11 l-11 -4 Z" />
+      <path class="pop pop-y" d="M268 300 l4 -11 l4 11 l11 4 l-11 4 l-4 11 l-4 -11 l-11 -4 Z" />
+      <path class="thin" d="M268 300 l4 -11 l4 11 l11 4 l-11 4 l-4 11 l-4 -11 l-11 -4 Z" />
+      <path class="pop pop-y" d="M228 206 l3 -8 l3 8 l8 3 l-8 3 l-3 8 l-3 -8 l-8 -3 Z" />
+      <path class="thin" d="M228 206 l3 -8 l3 8 l8 3 l-8 3 l-3 8 l-3 -8 l-8 -3 Z" />
+      <text class="sk-t sk-mid bo-clear-t" x="200" y="140">ALL CLEAR</text>
+    </g>
+
+    <!-- the offer -->
+    <g class="bo-env">
+      <rect class="paper" x="392" y="172" width="116" height="76" rx="4" />
+      <path class="bo-flap-open paper" d="M392 174 L450 136 L508 174 Z" />
+      <g class="bo-letter">
+        <rect class="paper" x="404" y="160" width="92" height="84" rx="3" />
+        <text class="sk-t sk-small" x="450" y="180">ONE OFFER</text>
+        <text class="sk-t sk-mid" x="450" y="204">$18,500</text>
+        <path class="thin" d="M418 222 c8 -10 12 6 20 -4 c6 -8 10 4 18 -2 c6 -4 10 0 24 -2" />
+      </g>
+      <path class="paper" d="M392 204 L450 232 L508 204 V248 H392 Z" />
+      <path class="bo-flap paper" d="M392 174 L450 208 L508 174 Z" />
+    </g>
+    <g class="bo-ok">
+      <circle class="paper" cx="520" cy="138" r="28" />
+      <circle class="pop pop-o" cx="520" cy="138" r="28" />
+      <path class="bo-check" pathLength="1" d="M506 138 l10 11 l18 -22" />
+    </g>
+
+    <!-- boxes going out the door -->
+    <g class="bo-box bo-box1"><rect class="paper" x="190" y="452" width="26" height="22" rx="2" /><rect class="pop pop-k" x="190" y="452" width="26" height="22" rx="2" /><path class="thin" d="M190 460 H216" /></g>
+    <g class="bo-box bo-box2"><rect class="paper" x="190" y="452" width="26" height="22" rx="2" /><rect class="pop pop-k" x="190" y="452" width="26" height="22" rx="2" /><path class="thin" d="M190 460 H216" /></g>
+    <g class="bo-box bo-box3"><rect class="paper" x="190" y="452" width="26" height="22" rx="2" /><rect class="pop pop-k" x="190" y="452" width="26" height="22" rx="2" /><path class="thin" d="M190 460 H216" /></g>
+
+    <!-- the truck -->
+    <g class="bo-truck">
+      <g class="bo-truck-body">
+        <rect class="paper" x="350" y="372" width="152" height="96" rx="6" />
+        <rect class="pop pop-y" x="350" y="372" width="152" height="96" rx="6" />
+        <text class="sk-t bo-truck-t" x="426" y="428">Last Call.</text>
+        <path class="paper" d="M502 402 H550 L576 432 V468 H502 Z" />
+        <path class="thin" d="M510 410 H546 L562 430 H510 Z" />
+        <path class="thin" d="M576 456 h6" />
+      </g>
+      <g class="bo-wheel" style="transform-origin: 392px 472px"><circle class="paper" cx="392" cy="472" r="18" /><path class="thin" d="M392 456 V488 M376 472 H408" /></g>
+      <g class="bo-wheel" style="transform-origin: 542px 472px"><circle class="paper" cx="542" cy="472" r="18" /><path class="thin" d="M542 456 V488 M526 472 H558" /></g>
+    </g>
+  </g>
+</svg>
