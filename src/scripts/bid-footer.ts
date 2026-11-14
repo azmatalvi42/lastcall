@@ -24,7 +24,7 @@ export function mountBidFooter(root: HTMLElement) {
   const fit = () => {
     const tall = window.matchMedia('(max-aspect-ratio: 4/5)').matches;
     const style = getComputedStyle(root);
-    const roomH = root.clientHeight - parseFloat(style.paddingTop) - parseFloat(style.paddingBottom) - status.offsetHeight * (tall ? 1.3 : 1) - legal.offsetHeight - 12;
+    const roomH = root.clientHeight - parseFloat(style.paddingTop) - parseFloat(style.paddingBottom) - status.offsetHeight * (tall ? 1.3 : 1) - legal.offsetHeight - (tall ? 32 : 12);
     inner.style.fontSize = '100px';
     const scale = Math.min(logo.clientWidth / inner.offsetWidth, roomH / inner.offsetHeight);
     if (scale > 0) inner.style.fontSize = `${100 * scale}px`;

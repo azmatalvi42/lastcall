@@ -71,7 +71,6 @@ bingoSquares.splice(7, 0, null);
 /** Logos come from each company's own website. Height evens out how large they look, since their shapes differ. */
 const partners: { name: string; logo?: string; width?: number; height?: number }[] = [
   { name: 'Dymon', logo: '/logos/dymon.png', width: 435, height: 169 },
-  { name: 'Apple Self Storage', logo: '/logos/apple-self-storage.png', width: 300, height: 65 },
   { name: 'StorageVault', logo: '/logos/storagevault.png', width: 900, height: 156 },
   { name: 'Sentinel', logo: '/logos/sentinel.svg', width: 200, height: 60 },
   { name: 'Public Storage', logo: '/logos/public-storage.png', width: 186, height: 98 },
@@ -81,7 +80,6 @@ const partners: { name: string; logo?: string; width?: number; height?: number }
 ];
 const logoHeights: Record<string, string> = {
   Dymon: '2.25rem',
-  'Apple Self Storage': '1.75rem',
   StorageVault: '1.5rem',
   Sentinel: '2.25rem',
   'Public Storage': '2.5rem',
@@ -242,9 +240,7 @@ const logoHeights: Record<string, string> = {
               <span class="panel-plus" aria-hidden="true"></span>
             </button>
             <div class="panel-open-copy">
-              <span class="panel-rule" aria-hidden="true"></span>
               <h2>Estate<br>Auctions</h2>
-              <p class="panel-kicker">Rare finds. Real value.</p>
               <p class="panel-blurb">Photographed lots, bidding online, and pickup arranged for you.</p>
               <a class="panel-cta" href="#walkthrough">Ask about an estate auction</a>
             </div>
@@ -258,9 +254,7 @@ const logoHeights: Record<string, string> = {
               <span class="panel-plus" aria-hidden="true"></span>
             </button>
             <div class="panel-open-copy">
-              <span class="panel-rule" aria-hidden="true"></span>
               <h2>Online<br>Sales</h2>
-              <p class="panel-kicker">Listed online. Found by buyers.</p>
               <p class="panel-blurb">We photograph, describe and list your things at set prices, then find the buyers.</p>
               <a class="panel-cta" href="#walkthrough">Ask about an online sale</a>
             </div>
@@ -274,9 +268,7 @@ const logoHeights: Record<string, string> = {
               <span class="panel-plus" aria-hidden="true"></span>
             </button>
             <div class="panel-open-copy">
-              <span class="panel-rule" aria-hidden="true"></span>
               <h2>Estate<br>Sales</h2>
-              <p class="panel-kicker">See it in the home.</p>
               <p class="panel-blurb">We price, stage, and run a sale in the house over a few days.</p>
               <a class="panel-cta" href="#walkthrough">Ask about an estate sale</a>
             </div>
@@ -290,9 +282,7 @@ const logoHeights: Record<string, string> = {
               <span class="panel-plus" aria-hidden="true"></span>
             </button>
             <div class="panel-open-copy">
-              <span class="panel-rule" aria-hidden="true"></span>
               <h2>Garage<br>Sales</h2>
-              <p class="panel-kicker">A Saturday, on the driveway.</p>
               <p class="panel-blurb">A neighbourhood sale we set up, run for the day, and tidy after.</p>
               <a class="panel-cta" href="#walkthrough">Ask about a garage sale</a>
             </div>
@@ -306,9 +296,7 @@ const logoHeights: Record<string, string> = {
               <span class="panel-plus" aria-hidden="true"></span>
             </button>
             <div class="panel-open-copy">
-              <span class="panel-rule" aria-hidden="true"></span>
               <h2>Buyout<br>Offers</h2>
-              <p class="panel-kicker">One offer. The house cleared.</p>
               <p class="panel-blurb">One written offer for everything. Once you accept, we empty the house.</p>
               <a class="panel-cta" href="#walkthrough">Get a buyout offer</a>
             </div>
